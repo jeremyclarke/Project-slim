@@ -1,0 +1,10 @@
+{% set ID = objects.ID %}
+
+<label>{{ objects.caption }}</label>
+</br>
+<select>
+    {% for option in objectSQL[ID] %}
+        <option value="{{ option }}">{{ option }}</option>
+    {% endfor %}
+
+</select>

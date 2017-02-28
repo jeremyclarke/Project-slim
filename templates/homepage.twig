@@ -1,0 +1,24 @@
+{% extends "base.twig" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Select a form...{{ lol }}</h1>
+    </div>
+
+    <div class="well">
+        <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque elit enim, bibendum at sem eu, tincidunt laoreet nisi.
+            Phasellus dictum, nisi id aliquet scelerisque, dui metus viverra nunc, ut placerat nulla lorem quis quam. Duis non lacus neque. Proin in iaculis eros.
+            Vestibulum ornare viverra nulla, tristique malesuada mauris euismod et.</span>
+    </div>
+
+    <div>
+        <ul class="list-group col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            {% for form in formsAll %}
+                <a href="form/{{ form['ID'] }}" class="list-group-item">{{ form['title'] }}</a>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}
