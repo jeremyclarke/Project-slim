@@ -2,7 +2,7 @@
 
 <label>{{ objects.caption }}</label>
 </br>
-<select>
+<select name="dropdown_{{ ID }}">
     {% for option in objectSQL[ID] %}
         <option value="{{ option }}">{{ option }}</option>
     {% endfor %}

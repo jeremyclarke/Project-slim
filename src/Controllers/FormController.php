@@ -21,4 +21,12 @@ class FormController
 
         return $results;
     }
+
+    function submitForm($params) {
+        print_r($params);
+
+        $originalSQL = "INSERT INTO project.testinput ( one, two, three ) VALUES (@@dropdown_1, @@dropdown_2, @@textbox_3')";
+
+        $newSQL = str_replace()
+    }
 }

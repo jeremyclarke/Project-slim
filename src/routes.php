@@ -22,3 +22,10 @@ $app->get('/form/{id}', function ($request, $response, $args) {
     ]);
 
 });
+
+$app->post('/submit', function ($request, $response, $args) {
+
+    $formController = new \App\Controllers\FormController($this->db);
+    $formController->submitForm($request->getParams());
+
+})->setName('formInsert');
