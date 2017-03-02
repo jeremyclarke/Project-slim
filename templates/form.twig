@@ -30,3 +30,31 @@
     </div>
 
 {% endblock %}
+
+{% block js %}
+    <script>
+        // Attach a submit handler to the form
+        $("form").submit(function (event) {
+
+            // Stop form from submitting normally
+            event.preventDefault();
+
+            // Send the data using post
+            var posting = $.post("{{ path_for('formInsert', { 'ID': formDetails.ID }) }}", $(this).serialize());
+
+            // Put the results in a div
+            posting.done(function (data) {
+                console.log(data);
+                swal({
+                        title: "Success",
+                        text: data.msg,
+                        type: "success"
+                    },
+                    function () {
+                        location.reload();
+                    });
+
+            });
+        });
+    </script>
+{% endblock %}

@@ -22,33 +22,31 @@ class FormController
         return $results;
     }
 
-    function submitForm($params, $formID)
+    function submitForm($params, $formID, $response)
     {
-        $sql = "SELECT SQL_insert_execute_query FROM project.objects WHERE form_id = ". $formID . " AND type = 'button' LIMIT 1";
+        $sql = "SELECT SQL_insert_execute_query FROM project.objects WHERE form_id = " . $formID . " AND type = 'button' LIMIT 1";
         $stmt = $this->dbconn->prepare($sql);
         $stmt->execute();
-        $insertSQL = $stmt->fetchColumn();
+        $actionSQL = $stmt->fetchColumn();
 
-        echo $insertSQL;
+        if (substr(strtoupper($actionSQL), 0, 4) === 'INSE') {
+            for ($i = 0; $i < sizeof($params); $i++) {
+                $actionSQL = str_replace("@@" . array_keys($params)[$i], '\'' . array_values($params)[$i] . '\'', $actionSQL);
+            }
 
-        print_r($params);
+            try {
+                $stmt = $this->dbconn->prepare($actionSQL);
+                $stmt->execute();
+            } catch (\PDOException $e) {
+                return $e->getMessage();
+            }
+
+        } else {
+            echo 'broke';
+        }
 
 
-        //
-//        $originalSQL = "INSERT INTO project.testinput ( one, two, three ) VALUES (@@dropdown_1, @@dropdown_2, @@textbox_3)";
-//
-//        $sqlExplode = explode("@@", $originalSQL);
-//        array_shift($sqlExplode);
-//
-//        print_r($sqlExplode);
-//        echo '</br></br></br>';
-//        // echo $originalSQL;
-//
-//        for ($i=0; i <= count($sqlExplode); $i++) {
-//            //$newSQL = str_replace('@@' . $sqlExplode[i], $params[i], $originalSQL);
-//            //echo $newSQL;
-//        }
-
-        //$newSQL = str_replace();
+       // return 'yay';
+        //return $response->withRedirect($router->pathFor('home'));
     }
 }

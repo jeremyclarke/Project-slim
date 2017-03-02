@@ -8,7 +8,7 @@ $app->get('/', function ($request, $response, $args) {
         'formsAll' => $formController->returnAllFormDetails(),
         'homeButtonTitle' => 'Home'
     ]);
-});
+})->setName('home');
 
 $app->get('/form/{id}', function ($request, $response, $args) {
     $formController = new \App\Controllers\FormController($this->db);
@@ -21,11 +21,14 @@ $app->get('/form/{id}', function ($request, $response, $args) {
         'objectSQL' => $objectController->getStatementResults()
     ]);
 
-});
+})->setName('form');
 
 $app->post('/submit/{ID}', function ($request, $response, $args) {
 
-   $formController = new \App\Controllers\FormController($this->db);
-   $formController->submitForm($request->getParams(), $args['ID']);
+    $formController = new \App\Controllers\FormController($this->db);
+    $msg = $formController->submitForm($request->getParams(), $args['ID']);
+
+    return $response->withJson(array('msg'=>$msg));
+    //return $response->withRedirect($this->router->pathFor('form', ['id' => $args['ID']]));
 
 })->setName('formInsert');
