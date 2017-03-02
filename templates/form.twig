@@ -17,7 +17,7 @@
             </div>
         {% endif %}
 
-        <form action="{{ path_for('formInsert') }}" method="post">
+        <form action="{{ path_for('formInsert', { 'ID': formDetails.ID }) }}" method="post">
             <ul>
                 {% for objects in objectsAll %}
                     {% include "objects/#{objects.type}.twig" %}

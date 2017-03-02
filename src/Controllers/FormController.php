@@ -22,22 +22,32 @@ class FormController
         return $results;
     }
 
-    function submitForm($params)
+    function submitForm($params, $formID)
     {
-        // print_r($params);
+        $sql = "SELECT SQL_insert_execute_query FROM project.objects WHERE form_id = ". $formID . " AND type = 'button' LIMIT 1";
+        $stmt = $this->dbconn->prepare($sql);
+        $stmt->execute();
+        $insertSQL = $stmt->fetchColumn();
 
-        $originalSQL = "INSERT INTO project.testinput ( one, two, three ) VALUES (@@dropdown_1, @@dropdown_2, @@textbox_3)";
-        $sqlExplode = explode("@@", $originalSQL);
-        array_shift($sqlExplode);
+        echo $insertSQL;
 
-        print_r($sqlExplode);
-        echo '</br></br></br>';
-        // echo $originalSQL;
+        print_r($params);
 
-        for ($i=0; i <= count($sqlExplode); $i++) {
-            //$newSQL = str_replace('@@' . $sqlExplode[i], $params[i], $originalSQL);
-            //echo $newSQL;
-        }
+
+        //
+//        $originalSQL = "INSERT INTO project.testinput ( one, two, three ) VALUES (@@dropdown_1, @@dropdown_2, @@textbox_3)";
+//
+//        $sqlExplode = explode("@@", $originalSQL);
+//        array_shift($sqlExplode);
+//
+//        print_r($sqlExplode);
+//        echo '</br></br></br>';
+//        // echo $originalSQL;
+//
+//        for ($i=0; i <= count($sqlExplode); $i++) {
+//            //$newSQL = str_replace('@@' . $sqlExplode[i], $params[i], $originalSQL);
+//            //echo $newSQL;
+//        }
 
         //$newSQL = str_replace();
     }
