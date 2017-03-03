@@ -37,8 +37,10 @@ class FormController
             try {
                 $stmt = $this->dbconn->prepare($actionSQL);
                 $stmt->execute();
+               // return $stmt->getSQLState();
             } catch (\PDOException $e) {
                 return $e->getMessage();
+                //return setStatus(400);
             }
 
         } else {

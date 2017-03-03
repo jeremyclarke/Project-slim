@@ -1,0 +1,8 @@
+{% set ID = objects.ID %}
+
+<label>{{ objects.caption }}</label>
+<br>
+{% for option in objectSQL[ID] %}
+    {#<option value="{{ option }}">{{ option }}</option>#}
+    <input type="radio" name="radio_{{ ID }}" value="{{ option }}"> {{ option }}<br>
+{% endfor %}

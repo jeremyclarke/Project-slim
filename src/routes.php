@@ -29,6 +29,5 @@ $app->post('/submit/{ID}', function ($request, $response, $args) {
     $msg = $formController->submitForm($request->getParams(), $args['ID']);
 
     return $response->withJson(array('msg'=>$msg));
-    //return $response->withRedirect($this->router->pathFor('form', ['id' => $args['ID']]));
 
 })->setName('formInsert');

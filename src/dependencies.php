@@ -40,6 +40,5 @@ $container['twig'] = function ($container) {
         'rootURL',
         empty($_SERVER['HTTPS']) ? 'http://' . $_SERVER['SERVER_NAME'] : 'https://' . $_SERVER['SERVER_NAME']
     );
-
     return $twig;
 };

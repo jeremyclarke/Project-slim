@@ -42,18 +42,28 @@
             // Send the data using post
             var posting = $.post("{{ path_for('formInsert', { 'ID': formDetails.ID }) }}", $(this).serialize());
 
-            // Put the results in a div
+            // Show the results
             posting.done(function (data) {
                 console.log(data);
-                swal({
-                        title: "Success",
-                        text: data.msg,
-                        type: "success"
-                    },
-                    function () {
-                        location.reload();
-                    });
-
+                if (data.msg) {
+                    swal({
+                            title: "Something is wrong!",
+                            text: data.msg,
+                            type: "error"
+                        },
+                        function () {
+                            //location.reload();
+                        });
+                } else {
+                    swal({
+                            title: "Success!",
+                            text: "Thanks! Your form has been submitted successfully.",
+                            type: "success"
+                        },
+                        function () {
+                            location.reload();
+                        });
+                }
             });
         });
     </script>
