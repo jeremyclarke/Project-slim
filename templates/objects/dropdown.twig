@@ -6,20 +6,18 @@
     {% set required = '' %}
 {% endif %}
 
-
-<label for="dropdown_{{ ID }}">{{ objects.caption }}</label>
-</br>
-<select class="form-control" name="dropdown_{{ ID }}" id="dropdown_{{ ID }}" {{ required }}>
+<select class="form-control" name="dropdown_{{ ID }}" id="dropdown_{{ ID }}"{{ required }}>
 
     <option value="">Please select</option>
 
     {% for option in objectSQL[ID] %}
+
         {% if option[1] is empty %}
             <option value="{{ option[0]|raw }}">{{ option[0]|raw }}</option>
-
         {% else %}
             <option value="{{ option[0]|raw }}">{{ option[1]|raw }}</option>
         {% endif %}
+
     {% endfor %}
 
 </select>

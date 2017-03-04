@@ -8,18 +8,18 @@ class FormController
 
     function __construct($db)
     {
-            $this->dbconn = $db;
+        $this->dbconn = $db;
     }
 
     function returnAllFormDetails()
     {
-            $sql = 'SELECT ID, ID, name, title, description FROM project.forms';
-            $stmt = $this->dbconn->prepare($sql);
-            $stmt->execute();
+        $sql = 'SELECT ID, ID, name, title, description, developer_mode FROM project.forms';
+        $stmt = $this->dbconn->prepare($sql);
+        $stmt->execute();
 
-            $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
+        $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
 
-            return $results;
+        return $results;
     }
 
     function submitForm($params, $formID, $response)
@@ -37,7 +37,7 @@ class FormController
             try {
                 $stmt = $this->dbconn->prepare($actionSQL);
                 $stmt->execute();
-               // return $stmt->getSQLState();
+                // return $stmt->getSQLState();
             } catch (\PDOException $e) {
                 return $e->getMessage();
                 //return setStatus(400);
@@ -48,7 +48,7 @@ class FormController
         }
 
 
-       // return 'yay';
+        // return 'yay';
         //return $response->withRedirect($router->pathFor('home'));
     }
 }

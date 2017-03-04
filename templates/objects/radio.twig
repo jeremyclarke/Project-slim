@@ -6,8 +6,7 @@
     {% set required = '' %}
 {% endif %}
 
-<label>{{ objects.caption }}</label>
-<br>
+<input type="hidden" name="radio_{{ ID }}" value="">
 
 {% for option in objectSQL[ID] %}
 
@@ -18,3 +17,5 @@
     {% endif %}
 
 {% endfor %}
+
+

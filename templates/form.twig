@@ -17,10 +17,22 @@
             </div>
         {% endif %}
 
-        <form class="col-lg-4 col-md-6 col-sm-12 col-xs-12" action="{{ path_for('formInsert', { 'ID': formDetails.ID }) }}" method="post">
+        <form class="col-lg-4 col-md-6 col-sm-12 col-xs-12"
+              action="{{ path_for('formInsert', { 'ID': formDetails.ID }) }}" method="post">
             <ul>
                 {% for objects in objectsAll %}
+
+                    {% if objects.required == '1' %}
+                        {% set required = 'required' %}
+                    {% else %}
+                        {% set required = '' %}
+                    {% endif %}
+
+                    <label for="{{ objects.type }}_{{ objects.ID }}">{{ objects.caption }}</label>
                     {% include "objects/#{objects.type}.twig" %}
+                    {% if formDetails['developer_mode'] == '1' %}
+                        <span class="label label-info">@@{{ objects.type }}_{{ objects.ID }}</span>
+                    {% endif %}
                     </br>
                     </br>
                 {% endfor %}
