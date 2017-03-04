@@ -8,18 +8,18 @@ class FormController
 
     function __construct($db)
     {
-        $this->dbconn = $db;
+            $this->dbconn = $db;
     }
 
     function returnAllFormDetails()
     {
-        $sql = 'SELECT ID, ID, name, title, description FROM project.forms';
-        $stmt = $this->dbconn->prepare($sql);
-        $stmt->execute();
+            $sql = 'SELECT ID, ID, name, title, description FROM project.forms';
+            $stmt = $this->dbconn->prepare($sql);
+            $stmt->execute();
 
-        $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
+            $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
 
-        return $results;
+            return $results;
     }
 
     function submitForm($params, $formID, $response)

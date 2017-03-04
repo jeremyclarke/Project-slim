@@ -21,7 +21,7 @@ class ObjectController
 
     function returnAllFormObjects($formID)
     {
-        $sql = 'SELECT ID, ID, form_ID, type, SQL_populate_query, SQL_insert_execute_query, caption, required FROM project.objects WHERE form_ID = ' . $formID;
+        $sql = 'SELECT ID, ID, form_ID, type, SQL_populate_query, SQL_insert_execute_query, caption, required FROM project.objects WHERE form_ID = ' . $formID . ' ORDER BY -obj_order DESC';
         $stmt = $this->dbconn->prepare($sql);
         $stmt->execute();
         $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE);
@@ -38,7 +38,8 @@ class ObjectController
     {
         $stmt = $this->dbconn->prepare($sql);
         $stmt->execute();
-        $this->statementResults[$id] = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
+        //$this->statementResults[$id] = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
+        $this->statementResults[$id] = $stmt->fetchAll(\PDO::FETCH_NUM);
     }
 
     function getStatementResults()

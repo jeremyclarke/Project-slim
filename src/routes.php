@@ -21,6 +21,7 @@ $app->get('/form/{id}', function ($request, $response, $args) {
         'objectSQL' => $objectController->getStatementResults()
     ]);
 
+
 })->setName('form');
 
 $app->post('/submit/{ID}', function ($request, $response, $args) {
@@ -28,6 +29,6 @@ $app->post('/submit/{ID}', function ($request, $response, $args) {
     $formController = new \App\Controllers\FormController($this->db);
     $msg = $formController->submitForm($request->getParams(), $args['ID']);
 
-    return $response->withJson(array('msg'=>$msg));
+    return $response->withJson(array('msg' => $msg));
 
 })->setName('formInsert');

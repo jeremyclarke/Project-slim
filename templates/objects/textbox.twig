@@ -1,3 +1,9 @@
-<label>{{ objects.caption }}</label>
+{% if objects.required == '1' %}
+    {% set required = 'required' %}
+{% else %}
+    {% set required = '' %}
+{% endif %}
+
+<label for="textbox_{{ objects.ID }}">{{ objects.caption }}</label>
 <br>
-<input type="text" name="textbox_{{ objects.ID }}">
+<input class="form-control" type="text" name="textbox_{{ objects.ID }}" id="textbox_{{ objects.ID }}" {{ required }}>

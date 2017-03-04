@@ -17,7 +17,7 @@
             </div>
         {% endif %}
 
-        <form action="{{ path_for('formInsert', { 'ID': formDetails.ID }) }}" method="post">
+        <form class="col-lg-4 col-md-6 col-sm-12 col-xs-12" action="{{ path_for('formInsert', { 'ID': formDetails.ID }) }}" method="post">
             <ul>
                 {% for objects in objectsAll %}
                     {% include "objects/#{objects.type}.twig" %}
@@ -26,6 +26,7 @@
                 {% endfor %}
             </ul>
         </form>
+
 
     </div>
 
@@ -47,7 +48,7 @@
                 console.log(data);
                 if (data.msg) {
                     swal({
-                            title: "Something is wrong!",
+                            title: "Something went wrong!",
                             text: data.msg,
                             type: "error"
                         },

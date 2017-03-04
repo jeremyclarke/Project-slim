@@ -1,4 +1,10 @@
-<label>{{ objects.caption }}</label>
+{% if objects.required == '1' %}
+    {% set required = 'required' %}
+{% else %}
+    {% set required = '' %}
+{% endif %}
+
+<label for="textarea_{{ objects.ID }}">{{ objects.caption }}</label>
 <br>
-<textarea rows="4" cols="50" name="textarea_{{ objects.ID }}">
+<textarea class="form-control" rows="4" cols="50" name="textarea_{{ objects.ID }}" id="textarea_{{ objects.ID }}" {{ required }}>
 </textarea>

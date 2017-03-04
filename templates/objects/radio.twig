@@ -1,8 +1,20 @@
 {% set ID = objects.ID %}
 
+{% if objects.required == '1' %}
+    {% set required = 'required' %}
+{% else %}
+    {% set required = '' %}
+{% endif %}
+
 <label>{{ objects.caption }}</label>
 <br>
+
 {% for option in objectSQL[ID] %}
-    {#<option value="{{ option }}">{{ option }}</option>#}
-    <input type="radio" name="radio_{{ ID }}" value="{{ option }}"> {{ option }}<br>
+
+    {% if option[1] is empty %}
+        <input type="radio" name="radio_{{ ID }}" value="{{ option[0]|raw }}" {{ required }}> {{ option[0]|raw }}<br>
+    {% else %}
+        <input type="radio" name="radio_{{ ID }}" value="{{ option[0]|raw }}" {{ required }}> {{ option[1]|raw }}<br>
+    {% endif %}
+
 {% endfor %}
