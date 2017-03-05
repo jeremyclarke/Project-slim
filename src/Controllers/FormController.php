@@ -24,15 +24,20 @@ class FormController
 
     function submitForm($params, $formID, $response)
     {
-        $sql = "SELECT SQL_insert_execute_query FROM project.objects WHERE form_id = " . $formID . " AND type = 'button' LIMIT 1";
+        $sql = "SELECT SQL_insert_execute_query FROM project.objects WHERE form_id = :formID AND type = 'button' LIMIT 1";
         $stmt = $this->dbconn->prepare($sql);
+        $stmt->bindParam(':formID', $formID, \PDO::PARAM_INT);
         $stmt->execute();
+
         $actionSQL = $stmt->fetchColumn();
 
         if (substr(strtoupper($actionSQL), 0, 4) === 'INSE') {
             for ($i = 0; $i < sizeof($params); $i++) {
                 $actionSQL = str_replace("@@" . array_keys($params)[$i], '\'' . array_values($params)[$i] . '\'', $actionSQL);
             }
+
+            //echo $actionSQL;
+            //die();
 
             try {
                 $stmt = $this->dbconn->prepare($actionSQL);

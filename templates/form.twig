@@ -23,18 +23,20 @@
                 {% for objects in objectsAll %}
 
                     {% if objects.required == '1' %}
-                        {% set required = 'required' %}
+                        <label for="{{ objects.type }}_{{ objects.ID }}">{{ objects.caption }} <span style="color:red;">*</span></label>
                     {% else %}
-                        {% set required = '' %}
+                        <label for="{{ objects.type }}_{{ objects.ID }}">{{ objects.caption }}</label>
                     {% endif %}
 
-                    <label for="{{ objects.type }}_{{ objects.ID }}">{{ objects.caption }}</label>
                     {% include "objects/#{objects.type}.twig" %}
+
                     {% if formDetails['developer_mode'] == '1' %}
                         <span class="label label-info">@@{{ objects.type }}_{{ objects.ID }}</span>
                     {% endif %}
+
                     </br>
                     </br>
+
                 {% endfor %}
             </ul>
         </form>
