@@ -33,27 +33,24 @@ class FormController
 
         if (substr(strtoupper($actionSQL), 0, 4) === 'INSE') {
             for ($i = 0; $i < sizeof($params); $i++) {
-                $actionSQL = str_replace("@@" . array_keys($params)[$i], '\'' . array_values($params)[$i] . '\'', $actionSQL);
+                $actionSQL = str_replace("@@" . array_keys($params)[$i], "?", $actionSQL);
             }
-
-            //echo $actionSQL;
-            //die();
 
             try {
                 $stmt = $this->dbconn->prepare($actionSQL);
+
+                for ($i = 0; $i < sizeof($params); $i++) {
+                    $stmt->bindParam($i + 1, array_values($params)[$i], \PDO::PARAM_STR, 1);
+                }
+
                 $stmt->execute();
-                // return $stmt->getSQLState();
+
             } catch (\PDOException $e) {
                 return $e->getMessage();
-                //return setStatus(400);
             }
 
         } else {
             echo 'broke';
         }
-
-
-        // return 'yay';
-        //return $response->withRedirect($router->pathFor('home'));
     }
 }
