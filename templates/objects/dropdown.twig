@@ -1,16 +1,14 @@
-{% set ID = objects.ID %}
-
 {% if objects.required == '1' %}
     {% set required = 'required' %}
 {% else %}
     {% set required = '' %}
 {% endif %}
 
-<select class="form-control" name="dropdown_{{ ID }}" id="dropdown_{{ ID }}"{{ required }}>
+<select class="form-control" name="dropdown_{{ objects.ID }}" id="dropdown_{{ objects.ID }}"{{ required }}>
 
     <option value="">Please select</option>
 
-    {% for option in objectSQL[ID] %}
+    {% for option in objectSQL[objects.ID] %}
 
         {% if option[1] is empty %}
             <option value="{{ option[0]|raw }}">{{ option[0]|raw }}</option>

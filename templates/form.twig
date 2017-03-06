@@ -1,36 +1,39 @@
 {% extends "base.twig" %}
 
 {% block title %}
-    {{ formDetails['title'] }}
+    {{ formDetails.title }}
 {% endblock %}
 
 {% block content %}
 
     <div class="container">
         <div class="page-header">
-            <h1>{{ formDetails['title'] }}</h1>
+            <h1>{{ formDetails.title }}</h1>
         </div>
 
-        {% if formDetails['description'] is not empty %}
+        {% if formDetails.description is not empty %}
             <div class="well">
-                <span>{{ formDetails['description']|raw }}</span>
+                <span>{{ formDetails.description|raw }}</span>
             </div>
         {% endif %}
 
-        <form class="col-lg-4 col-md-6 col-sm-12 col-xs-12"
+        <form class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
               action="{{ path_for('formInsert', { 'ID': formDetails.ID }) }}" method="post">
             <ul>
                 {% for objects in objectsAll %}
-
-                    {% if objects.required == '1' %}
-                        <label for="{{ objects.type }}_{{ objects.ID }}">{{ objects.caption }} <span style="color:red;">*</span></label>
-                    {% else %}
-                        <label for="{{ objects.type }}_{{ objects.ID }}">{{ objects.caption }}</label>
+                    {% if objects.type != 'label' %}
+                        {% if objects.required == '1' %}
+                            <label for="{{ objects.type }}_{{ objects.ID }}">{{ objects.caption }} <span
+                                        style="color:red;">*</span></label>
+                        {% else %}
+                            <label for="{{ objects.type }}_{{ objects.ID }}">{{ objects.caption }}</label>
+                        {% endif %}
+                        </br>
                     {% endif %}
 
                     {% include "objects/#{objects.type}.twig" %}
 
-                    {% if formDetails['developer_mode'] == '1' %}
+                    {% if formDetails.developer_mode == '1' %}
                         <span class="label label-info">@@{{ objects.type }}_{{ objects.ID }}</span>
                     {% endif %}
 
@@ -40,8 +43,6 @@
                 {% endfor %}
             </ul>
         </form>
-
-
     </div>
 
 {% endblock %}
