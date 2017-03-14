@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="page-header">
-        <h1>Select a form...</h1>
+        <h1>Welcome</h1>
     </div>
 
     <div class="well">
@@ -15,12 +15,38 @@
             Vestibulum ornare viverra nulla, tristique malesuada mauris euismod et.</span>
     </div>
 
-    <div>
-        <ul class="list-group col-lg-4 col-md-6 col-sm-12 col-xs-12">
-            {% for form in formsAll %}
-                <a href="{{ path_for('form', { 'id' : form.ID } ) }}" class="list-group-item">{{ form.title }}</a>
-            {% endfor %}
-        </ul>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Public forms</h3>
+            </div>
+            <div class="panel-body">
+                <ul class="list-group">
+
+                    {% for form in formsAll %}
+                        <a href="{{ path_for('form', { 'id' : form.ID } ) }}"
+                           class="list-group-item">{{ form.title }}</a>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title">Private forms</h3>
+            </div>
+            <div class="panel-body">
+                <ul class="list-group">
+
+                    {% for form in formsAll %}
+                        <a href="{{ path_for('form', { 'id' : form.ID } ) }}"
+                           class="list-group-item">{{ form.title }}</a>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
 
 {% endblock %}

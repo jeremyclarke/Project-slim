@@ -53,13 +53,15 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">Forms <span class="caret"></span></a>
                     <ul class="dropdown-menu">
+                        <li role="separator" class="divider"></li>
+                        <li class="dropdown-header">Public Forms</li>
                         {% for form in formsAll %}
                             <li>
                                 <a href="{{ path_for('form', { 'id' : form.ID } ) }}">{{ form['title'] }}</a>
                             </li>
                         {% endfor %}
                         <li role="separator" class="divider"></li>
-                        <li class="dropdown-header">Nav header</li>
+                        <li class="dropdown-header">Private Forms</li>
                         <li><a href="#">Separated link</a></li>
                         <li><a href="#">One more separated link</a></li>
                     </ul>
@@ -106,7 +108,8 @@
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
+                        <input type="password" class="form-control" id="password" name="password"
+                               placeholder="Enter password">
                     </div>
                     <div class="checkbox">
                         <label><input type="checkbox" value="" checked>Remember me</label>
