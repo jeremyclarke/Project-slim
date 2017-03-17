@@ -18,7 +18,7 @@
         {% endif %}
 
         <form class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
-              action="{{ path_for('formInsert', { 'ID': formDetails.ID }) }}" method="post">
+              action="{{ path_for('formInsert', { 'ID': formDetails.ID }) }}" method="post" id="pageForm">
             <ul>
                 {% for objects in objectsAll %}
                     {% if objects.type != 'label' %}
@@ -50,7 +50,7 @@
 {% block js %}
     <script>
         // Attach a submit handler to the form
-        $("form").submit(function (event) {
+        $("#pageForm").submit(function (event) {
 
             // Stop form from submitting normally
             event.preventDefault();
