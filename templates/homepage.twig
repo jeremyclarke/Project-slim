@@ -7,7 +7,7 @@
 {% block content %}
     <div class="page-header">
         {% if session.user is defined %}
-            <h1>Welcome, {{ session.user.name }}.</h1>
+            <h1>Welcome, {{ session.user.first_name }}.</h1>
         {% else %}
             <h1>Welcome, guest user.</h1>
         {% endif %}

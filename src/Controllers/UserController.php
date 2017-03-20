@@ -67,8 +67,9 @@ class UserController
 
             $hash_password = password_hash($this->password, PASSWORD_BCRYPT);
 
-            $stmt = $this->dbconn->prepare("INSERT INTO project.users (name, email, password) VALUES (:name, :email, :password)");
-            $stmt->bindParam("name", $this->firstName, \PDO::PARAM_STR);
+            $stmt = $this->dbconn->prepare("INSERT INTO project.users (first_name, last_name, email, password) VALUES (:first_name, :last_name, :email, :password)");
+            $stmt->bindParam("first_name", $this->firstName, \PDO::PARAM_STR);
+            $stmt->bindParam("last_name", $this->lastName, \PDO::PARAM_STR);
             $stmt->bindParam("email", $this->email, \PDO::PARAM_STR);
             $stmt->bindParam("password", $hash_password, \PDO::PARAM_STR);
 

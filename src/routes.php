@@ -66,12 +66,9 @@ $app->post('/register', function ($request, $response, $args) {
 //    ]);
 })->setName('register');
 
-$app->get('/logout', function ($request, $response, $args) use ($app) {
+$app->get('/logout', function ($request, $response, $args) {
 
     session_start();
     unset($_SESSION["user"]);
-    //$app->redirect('/');
     return $response->withStatus(302)->withHeader('Location', '/');
-
-
 })->setName('logout');
