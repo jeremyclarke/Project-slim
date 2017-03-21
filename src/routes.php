@@ -4,24 +4,37 @@
 $app->get('/', function ($request, $response, $args) {
     $formController = new \App\Controllers\FormController($this->db);
 
-    return $this->twig->render($response, 'homepage.twig', [
-        'formsAll' => $formController->returnAllFormDetails(),
-        'session' => $_SESSION
-
-    ]);
+    if (isset($_SESSION['user'])) {
+        return $this->twig->render($response, 'homepage.twig', [
+            'formsAllPrivate' => $formController->returnAllFormDetailsPrivate($_SESSION['user']->id), //private forms
+            'formsAllPublic' => $formController->returnAllFormDetailsPublic(), //public forms
+            'session' => $_SESSION
+        ]);
+    } else {
+        return $this->twig->render($response, 'homepage.twig', [
+            'formsAllPublic' => $formController->returnAllFormDetailsPublic(), //public forms
+            'session' => $_SESSION
+        ]);
+    }
 })->setName('home');
 
 $app->get('/form/{id}', function ($request, $response, $args) {
+
     $formController = new \App\Controllers\FormController($this->db);
     $objectController = new \App\Controllers\ObjectController($this->db);
+    $userController = new \App\Controllers\UserController($this->db);
 
-    return $this->twig->render($response, 'form.twig', [
-        'formsAll' => $formController->returnAllFormDetails(),
-        'formDetails' => $formController->returnAllFormDetails()[$args['id']],
-        'objectsAll' => $objectController->returnAllFormObjects($args['id']),
-        'objectSQL' => $objectController->getStatementResults(),
-        'session' => $_SESSION
-    ]);
+    if ($userController->verifyUser($args['id'])) {
+        return $this->twig->render($response, 'form.twig', [
+            'formsAllPublic' => $formController->returnAllFormDetailsPublic(),
+            'formDetails' => $formController->returnAllFormDetailsPrivate()[$args['id']],
+            'objectsAll' => $objectController->returnAllFormObjects($args['id']),
+            'objectSQL' => $objectController->getStatementResults(),
+            'session' => $_SESSION
+        ]);
+    } else {
+        die('NO');
+    }
 })->setName('form');
 
 $app->post('/submit/{ID}', function ($request, $response, $args) {
@@ -36,10 +49,9 @@ $app->post('/login', function ($request, $response, $args) use ($app) {
     $userController = new \App\Controllers\UserController($this->db);
     $isUserLoggedIn = $userController->loginUser($request->getParams());
 
-    if ($isUserLoggedIn){
+    if ($isUserLoggedIn) {
         //do nothing
-    }
-    else if (!$isUserLoggedIn) {
+    } else if (!$isUserLoggedIn) {
         return $response->withJson(array('msg' => 'Incorrect email address or password. Please try again.'));
     } else {
         return $response->withJson(array('msg' => 'Error: ' . $isUserLoggedIn));

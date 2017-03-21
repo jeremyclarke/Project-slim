@@ -11,10 +11,23 @@ class FormController
         $this->dbconn = $db;
     }
 
-    function returnAllFormDetails()
+    function returnAllFormDetailsPublic()
     {
-        $sql = 'SELECT ID, ID, name, title, description, developer_mode FROM project.forms';
+        $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms WHERE private = 0';
         $stmt = $this->dbconn->prepare($sql);
+        $stmt->execute();
+
+        $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
+
+        return $results;
+    }
+
+    function returnAllFormDetailsPrivate($userID)
+    {
+        $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms WHERE private = 1 AND ID IN (SELECT form_id from project.permissions where user_id = :userID)';
+        $stmt = $this->dbconn->prepare($sql);
+        $stmt->bindParam("userID", $userID, \PDO::PARAM_INT);
+
         $stmt->execute();
 
         $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);

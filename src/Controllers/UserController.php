@@ -81,10 +81,42 @@ class UserController
             }
 
         } catch (\PDOException $e) {
-            echo $e->getMessage();
+            die($e->getMessage());
+        }
+    }
 
+    function verifyUser($formID)
+    {
+        try { //first check if form is private or not, if not, allow it to be viewed
+            $stmt = $this->dbconn->prepare("SELECT private FROM project.forms WHERE ID = :formID");
+            $stmt->bindParam("formID", $formID, \PDO::PARAM_INT);
+
+            $stmt->execute();
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if ($row['private'] == 0) {
+                return true;
+            }
+
+        } catch (\PDOException $e) {
+            die($e->getMessage());
         }
 
+        try { //if its private, check the user logged it should be able to access it
+            $stmt = $this->dbconn->prepare("SELECT COUNT(user_id) AS num FROM project.permissions WHERE form_ID = :formID AND user_ID = :userID");
+            $stmt->bindParam("formID", $formID, \PDO::PARAM_INT);
+            $stmt->bindParam("userID", $formID, \PDO::PARAM_INT);
 
+            $stmt->execute();
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if ($row['num'] > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (\PDOException $e) {
+            die($e->getMessage());
+        }
     }
 }

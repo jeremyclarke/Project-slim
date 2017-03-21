@@ -53,9 +53,9 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">Forms <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li role="separator" class="divider"></li>
+                        {#<li role="separator" class="divider"></li>#}
                         <li class="dropdown-header">Public Forms</li>
-                        {% for form in formsAll %}
+                        {% for form in formsAllPublic %}
                             <li>
                                 <a href="{{ path_for('form', { 'id' : form.ID } ) }}">{{ form['title'] }}</a>
                             </li>
@@ -65,8 +65,13 @@
 
                         {% if session.user is defined %}
                             <li class="dropdown-header">Private Forms</li>
-                            <li><a href="#">Separated link</a></li>
-                            <li><a href="#">One more separated link</a></li>
+
+                            {% for form in formsAllPrivate %}
+                                <li>
+                                    <a href="{{ path_for('form', { 'id' : form.ID } ) }}">{{ form['title'] }}</a>
+                                </li>
+                            {% endfor %}
+
                         {% endif %}
 
                     </ul>

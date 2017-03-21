@@ -27,10 +27,11 @@
             <div class="panel-body">
                 <ul class="list-group">
 
-                    {% for form in formsAll %}
+                    {% for form in formsAllPublic %}
                         <a href="{{ path_for('form', { 'id' : form.ID } ) }}"
                            class="list-group-item">{{ form.title }}</a>
                     {% endfor %}
+
                 </ul>
             </div>
         </div>
@@ -45,10 +46,11 @@
                 {% if session.user is defined %}
                     <ul class="list-group">
 
-                        {% for form in formsAll %}
+                        {% for form in formsAllPrivate %}
                             <a href="{{ path_for('form', { 'id' : form.ID } ) }}"
                                class="list-group-item">{{ form.title }}</a>
                         {% endfor %}
+
                     </ul>
                 {% else %}
                     <span>Please <a href="#" data-toggle="modal" data-target="#myModal">login</a> to access private forms.</span>
