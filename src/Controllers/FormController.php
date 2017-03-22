@@ -11,29 +11,45 @@ class FormController
         $this->dbconn = $db;
     }
 
-    function returnAllFormDetailsPublic()
-    {
-        $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms WHERE private = 0';
-        $stmt = $this->dbconn->prepare($sql);
-        $stmt->execute();
-
-        $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
-
-        return $results;
-    }
-
-    function returnAllFormDetailsPrivate($userID)
+    function returnUsersPrivateFormDetails($userID)
     {
         $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms WHERE private = 1 AND ID IN (SELECT form_id from project.permissions where user_id = :userID)';
+
         $stmt = $this->dbconn->prepare($sql);
         $stmt->bindParam("userID", $userID, \PDO::PARAM_INT);
-
         $stmt->execute();
 
         $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
 
         return $results;
     }
+
+    function returnPublicFormDetails()
+    {
+        $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms WHERE private = 0';
+
+        $stmt = $this->dbconn->prepare($sql);
+        $stmt->execute();
+
+        $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
+
+        return $results;
+    }
+
+
+
+//    function returnAllFormDetailsPrivate($userID)
+//    {
+//        $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms WHERE private = 1 AND ID IN (SELECT form_id from project.permissions where user_id = :userID)';
+//        $stmt = $this->dbconn->prepare($sql);
+//        $stmt->bindParam("userID", $userID, \PDO::PARAM_INT);
+//
+//        $stmt->execute();
+//
+//        $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
+//
+//        return $results;
+//    }
 
     function submitForm($params, $formID, $response)
     {

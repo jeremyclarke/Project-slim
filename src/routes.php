@@ -2,21 +2,31 @@
 // Routes
 
 $app->get('/', function ($request, $response, $args) {
+
+    //if (isset($_COOKIE['displayUnauthAccess'])) {
+    echo $_COOKIE["displayUnauthAccess"];    //}
+
+    echo 'y';
+
+    die();
+
     $formController = new \App\Controllers\FormController($this->db);
+
 
     if (isset($_SESSION['user'])) {
         return $this->twig->render($response, 'homepage.twig', [
-            'formsAllPrivate' => $formController->returnAllFormDetailsPrivate($_SESSION['user']->id), //private forms
-            'formsAllPublic' => $formController->returnAllFormDetailsPublic(), //public forms
-            'session' => $_SESSION
+            'formsAllPublic' => $formController->returnPublicFormDetails(), //public forms
+            'formsAllPrivate' => $formController->returnUsersPrivateFormDetails($_SESSION['user']->id), //private forms
+            'user' => $_SESSION['user']
         ]);
     } else {
         return $this->twig->render($response, 'homepage.twig', [
-            'formsAllPublic' => $formController->returnAllFormDetailsPublic(), //public forms
-            'session' => $_SESSION
+            'formsAllPublic' => $formController->returnPublicFormDetails(), //public forms
+            'user' => $_SESSION['user']
         ]);
     }
-})->setName('home');
+})->
+setName('home');
 
 $app->get('/form/{id}', function ($request, $response, $args) {
 
@@ -26,14 +36,20 @@ $app->get('/form/{id}', function ($request, $response, $args) {
 
     if ($userController->verifyUser($args['id'])) {
         return $this->twig->render($response, 'form.twig', [
-            'formsAllPublic' => $formController->returnAllFormDetailsPublic(),
-            'formDetails' => $formController->returnAllFormDetailsPrivate()[$args['id']],
+            'formsAllPublic' => $formController->returnPublicFormDetails(),
+            'formDetails' => $formController->returnPublicFormDetails()[$args['id']],
             'objectsAll' => $objectController->returnAllFormObjects($args['id']),
             'objectSQL' => $objectController->getStatementResults(),
-            'session' => $_SESSION
+            'user' => $_SESSION['user']
         ]);
     } else {
-        die('NO');
+
+        //echo $_COOKIE["displayUnauthAccess"];
+
+        return $response->withStatus(302)->withHeader('Location', '/');
+        setcookie("displayUnauthAccess", "Unauthorised");
+
+        exit;
     }
 })->setName('form');
 

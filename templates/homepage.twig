@@ -6,8 +6,8 @@
 
 {% block content %}
     <div class="page-header">
-        {% if session.user is defined %}
-            <h1>Welcome, {{ session.user.first_name }}.</h1>
+        {% if user is defined %}
+            <h1>Welcome, {{ user.first_name }}.</h1>
         {% else %}
             <h1>Welcome, guest user.</h1>
         {% endif %}
@@ -28,9 +28,12 @@
                 <ul class="list-group">
 
                     {% for form in formsAllPublic %}
-                        <a href="{{ path_for('form', { 'id' : form.ID } ) }}"
-                           class="list-group-item">{{ form.title }}</a>
+                        {#{% if form.private == 0 %}#}
+                            <a href="{{ path_for('form', { 'id' : form.ID } ) }}"
+                               class="list-group-item">{{ form.title }}</a>
+                        {#{% endif %}#}
                     {% endfor %}
+
 
                 </ul>
             </div>
@@ -43,7 +46,7 @@
                 <h3 class="panel-title">Private forms</h3>
             </div>
             <div class="panel-body">
-                {% if session.user is defined %}
+                {% if user is defined %}
                     <ul class="list-group">
 
                         {% for form in formsAllPrivate %}
@@ -53,7 +56,8 @@
 
                     </ul>
                 {% else %}
-                    <span>Please <a href="#" data-toggle="modal" data-target="#myModal">login</a> to access private forms.</span>
+                    <span>Please <a href="#" data-toggle="modal"
+                                    data-target="#myModal">login</a> to access private forms.</span>
                 {% endif %}
             </div>
         </div>
