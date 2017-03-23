@@ -3,30 +3,25 @@
 
 $app->get('/', function ($request, $response, $args) {
 
-    //if (isset($_COOKIE['displayUnauthAccess'])) {
-    echo $_COOKIE["displayUnauthAccess"];    //}
-
-    echo 'y';
-
-    die();
-
     $formController = new \App\Controllers\FormController($this->db);
 
-
-    if (isset($_SESSION['user'])) {
-        return $this->twig->render($response, 'homepage.twig', [
-            'formsAllPublic' => $formController->returnPublicFormDetails(), //public forms
-            'formsAllPrivate' => $formController->returnUsersPrivateFormDetails($_SESSION['user']->id), //private forms
-            'user' => $_SESSION['user']
-        ]);
+    if (isset($_SESSION['user'])) { //If user is logged in
+        return $this->twig->render($response, 'homepage.twig',
+            [
+                'formsAll' => $formController->returnAllFormDetails(),
+                'formsAllPrivate' => $formController->returnUsersPrivateFormDetails($_SESSION['user']->id), //private forms
+                'user' => $_SESSION['user']
+            ]
+        );
     } else {
-        return $this->twig->render($response, 'homepage.twig', [
-            'formsAllPublic' => $formController->returnPublicFormDetails(), //public forms
-            'user' => $_SESSION['user']
-        ]);
+        return $this->twig->render($response, 'homepage.twig',
+            [
+                'formsAll' => $formController->returnAllFormDetails() //public forms
+            ]
+        );
     }
-})->
-setName('home');
+})->setName('home');
+
 
 $app->get('/form/{id}', function ($request, $response, $args) {
 
@@ -35,22 +30,22 @@ $app->get('/form/{id}', function ($request, $response, $args) {
     $userController = new \App\Controllers\UserController($this->db);
 
     if ($userController->verifyUser($args['id'])) {
-        return $this->twig->render($response, 'form.twig', [
-            'formsAllPublic' => $formController->returnPublicFormDetails(),
-            'formDetails' => $formController->returnPublicFormDetails()[$args['id']],
-            'objectsAll' => $objectController->returnAllFormObjects($args['id']),
-            'objectSQL' => $objectController->getStatementResults(),
-            'user' => $_SESSION['user']
-        ]);
+        return $this->twig->render
+        ($response, 'form.twig',
+            [
+                //'formsAll' => $formController->returnAllFormDetails(),
+                'formDetails' => $formController->returnAllFormDetails()[$args['id']],
+                'objectsAll' => $objectController->returnAllFormObjects($args['id']),
+                'objectSQL' => $objectController->getStatementResults(),
+                'user' => $_SESSION['user']
+            ]
+        );
     } else {
-
-        //echo $_COOKIE["displayUnauthAccess"];
-
         return $response->withStatus(302)->withHeader('Location', '/');
         setcookie("displayUnauthAccess", "Unauthorised");
-
-        exit;
+        //exit;
     }
+//    }
 })->setName('form');
 
 $app->post('/submit/{ID}', function ($request, $response, $args) {
@@ -100,3 +95,8 @@ $app->get('/logout', function ($request, $response, $args) {
     unset($_SESSION["user"]);
     return $response->withStatus(302)->withHeader('Location', '/');
 })->setName('logout');
+
+$app->get('/admin', function ($request, $response, $args) {
+
+    echo 'admin panel here';
+})->setName('admin');

@@ -105,7 +105,7 @@ class UserController
         try { //if its private, check the user logged it should be able to access it
             $stmt = $this->dbconn->prepare("SELECT COUNT(user_id) AS num FROM project.permissions WHERE form_ID = :formID AND user_ID = :userID");
             $stmt->bindParam("formID", $formID, \PDO::PARAM_INT);
-            $stmt->bindParam("userID", $formID, \PDO::PARAM_INT);
+            $stmt->bindParam("userID", $_SESSION['user']->id, \PDO::PARAM_INT);
 
             $stmt->execute();
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);

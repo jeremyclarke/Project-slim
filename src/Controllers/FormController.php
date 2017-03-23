@@ -13,7 +13,9 @@ class FormController
 
     function returnUsersPrivateFormDetails($userID)
     {
-        $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms WHERE private = 1 AND ID IN (SELECT form_id from project.permissions where user_id = :userID)';
+        $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms 
+                WHERE private = 1 
+                AND ID IN (SELECT form_id from project.permissions where user_id = :userID)';
 
         $stmt = $this->dbconn->prepare($sql);
         $stmt->bindParam("userID", $userID, \PDO::PARAM_INT);
@@ -24,9 +26,21 @@ class FormController
         return $results;
     }
 
-    function returnPublicFormDetails()
+//    function returnPublicFormDetails()
+//    {
+//        $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms WHERE private = 0';
+//
+//        $stmt = $this->dbconn->prepare($sql);
+//        $stmt->execute();
+//
+//        $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
+//
+//        return $results;
+//    }
+
+    function returnAllFormDetails()
     {
-        $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms WHERE private = 0';
+        $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms';
 
         $stmt = $this->dbconn->prepare($sql);
         $stmt->execute();
@@ -35,6 +49,27 @@ class FormController
 
         return $results;
     }
+
+
+//    function checkIfFormPublic($formID)
+//    {
+//        try { //first check if form is private or not, if not, allow it to be viewed
+//            $stmt = $this->dbconn->prepare("SELECT private FROM project.forms WHERE ID = :formID");
+//            $stmt->bindParam("formID", $formID, \PDO::PARAM_INT);
+//
+//            $stmt->execute();
+//            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+//
+//            if ($row['private'] == 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//
+//        } catch (\PDOException $e) {
+//            die($e->getMessage());
+//        }
+//    }
 
 
 
