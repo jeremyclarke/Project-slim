@@ -62,26 +62,26 @@ class UserController
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if ($row['num'] > 0) {
-                die('User already exists');
-            }
+                return false; //user already exists
+            } else {
 
-            $hash_password = password_hash($this->password, PASSWORD_BCRYPT);
+                $hash_password = password_hash($this->password, PASSWORD_BCRYPT);
 
-            $stmt = $this->dbconn->prepare("INSERT INTO project.users (first_name, last_name, email, password) VALUES (:first_name, :last_name, :email, :password)");
-            $stmt->bindParam("first_name", $this->firstName, \PDO::PARAM_STR);
-            $stmt->bindParam("last_name", $this->lastName, \PDO::PARAM_STR);
-            $stmt->bindParam("email", $this->email, \PDO::PARAM_STR);
-            $stmt->bindParam("password", $hash_password, \PDO::PARAM_STR);
+                $stmt = $this->dbconn->prepare("INSERT INTO project.users (first_name, last_name, email, password) VALUES (:first_name, :last_name, :email, :password)");
+                $stmt->bindParam("first_name", $this->firstName, \PDO::PARAM_STR);
+                $stmt->bindParam("last_name", $this->lastName, \PDO::PARAM_STR);
+                $stmt->bindParam("email", $this->email, \PDO::PARAM_STR);
+                $stmt->bindParam("password", $hash_password, \PDO::PARAM_STR);
 
-            $result = $stmt->execute();
+                $result = $stmt->execute();
 
-            if ($result) {
-                echo 'Thank you for registering.';
-                die();
+                if ($result) {
+                    return true; //registered successfully
+                }
             }
 
         } catch (\PDOException $e) {
-            die($e->getMessage());
+            return ($e->getMessage());
         }
     }
 

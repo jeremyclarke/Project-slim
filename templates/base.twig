@@ -9,7 +9,9 @@
         <!-- Bootstrap -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="/css/footer.css">
+        <link rel="stylesheet" href="/css/styles.css">
         <link rel="stylesheet" type="text/css" href="/css/sweetalert.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 
         <style>
             .modal-header, h4, .close {
@@ -49,47 +51,47 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             {#<ul class="nav navbar-nav">#}
-                {#<li class="dropdown">#}
-                    {#<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"#}
-                       {#aria-expanded="false">Forms <span class="caret"></span></a>#}
-                    {#<ul class="dropdown-menu">#}
-                        {#<li role="separator" class="divider"></li>#}
-                        {#<li class="dropdown-header">Public Forms</li>#}
-                        {#{% for form in formsAllPublic %}#}
-                            {#<li>#}
-                                {#<a href="{{ path_for('form', { 'id' : form.ID } ) }}">{{ form['title'] }}</a>#}
-                            {#</li>#}
-                        {#{% endfor %}#}
+            {#<li class="dropdown">#}
+            {#<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"#}
+            {#aria-expanded="false">Forms <span class="caret"></span></a>#}
+            {#<ul class="dropdown-menu">#}
+            {#<li role="separator" class="divider"></li>#}
+            {#<li class="dropdown-header">Public Forms</li>#}
+            {#{% for form in formsAllPublic %}#}
+            {#<li>#}
+            {#<a href="{{ path_for('form', { 'id' : form.ID } ) }}">{{ form['title'] }}</a>#}
+            {#</li>#}
+            {#{% endfor %}#}
 
-                        {#<li role="separator" class="divider"></li>#}
+            {#<li role="separator" class="divider"></li>#}
 
-                        {#{% if user is defined %}#}
-                            {#<li class="dropdown-header">Private Forms</li>#}
+            {#{% if user is defined %}#}
+            {#<li class="dropdown-header">Private Forms</li>#}
 
-                            {#{% for form in formsAllPrivate %}#}
-                                {#<li>#}
-                                    {#<a href="{{ path_for('form', { 'id' : form.ID } ) }}">{{ form['title'] }}</a>#}
-                                {#</li>#}
-                            {#{% endfor %}#}
+            {#{% for form in formsAllPrivate %}#}
+            {#<li>#}
+            {#<a href="{{ path_for('form', { 'id' : form.ID } ) }}">{{ form['title'] }}</a>#}
+            {#</li>#}
+            {#{% endfor %}#}
 
-                        {#{% endif %}#}
+            {#{% endif %}#}
 
-                    {#</ul>#}
-                {#</li>#}
+            {#</ul>#}
+            {#</li>#}
             {#</ul>#}
             <ul class="nav navbar-nav navbar-right">
                 {% if user is not defined %}
-                <li><a href="#" data-toggle="modal" data-target="#myModal">Login</a></li>
+                <li><a href="#" data-toggle="modal" data-target="#loginModal">Login</a></li>
                 {% else %}
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">{{ user.first_name }} {{ user.last_name }} <span
                                 class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ path_for('logout') }}">Log out</a></li>
                         {% if user.admin %}
                             <li><a href="{{ path_for('admin') }}">Admin Panel</a></li>
                         {% endif %}
+                        <li><a href="{{ path_for('logout') }}">Log out</a></li>
 
                     </ul>
             </ul>
@@ -114,12 +116,14 @@
 </div>
 
 {% include 'login.twig' %}
+{% include 'register.twig' %}
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="/js/sweetalert.min.js"></script>
 
-<script>
+<script> // LOGIN FORM SUBMISSION
     // Attach a submit handler to the form
     $("#loginForm").submit(function (event) {
 
@@ -127,24 +131,62 @@
         event.preventDefault();
 
         // Send the data using post
-        var posting = $.post("{{ path_for('login') }}", $(this).serialize());
+        var posting = $.post("{{ path_for('login') }}", $('#loginForm').serialize());
 
         // Show the results
         posting.done(function (data) {
             console.log(data);
+
             if (data.msg) {
-                swal({
-                        title: "Oops!",
-                        text: data.msg,
-                        type: "error"
-                    }
-                );
+
+                $(".incorrectLogin").show();
+                $("#loginModal").addClass("animated shake").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',
+                    function () {
+                        $("#loginModal").removeClass("animated shake");
+                    });
             } else {
+                $(".incorrectLogin").hide();
                 swal({
                         title: "Logged in",
                         type: "success",
                         timer: 0,
                         showConfirmButton: false
+                    },
+                    function () {
+                        location.reload();
+                    });
+            }
+        });
+    });
+</script>
+
+<script> // REGISTER FORM SUBMISSION
+    // Attach a submit handler to the form
+    $("#registerForm").submit(function (event) {
+
+        // Stop form from submitting normally
+        event.preventDefault();
+
+        // Send the data using post
+        var posting = $.post("{{ path_for('register') }}", $("#registerForm").serialize());
+
+        // Show the results
+        posting.done(function (data) {
+            console.log(data);
+
+            if (data) {
+                swal({
+                    title: data.msgTitle,
+                    text: data.msgBody,
+                    type: "warning",
+                    showConfirmButton: true
+                });
+            } else {
+                swal({
+                        title: "Registered successfully",
+                        text: "Thanks! Your account has been registered successfully. You can now login from the home page.",
+                        type: "success",
+                        showConfirmButton: true
                     },
                     function () {
                         location.reload();

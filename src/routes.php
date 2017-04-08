@@ -25,6 +25,12 @@ $app->get('/', function ($request, $response, $args) {
 
 $app->get('/form/{id}', function ($request, $response, $args) {
 
+//    $form = populateForm($args['id']);
+//    //more code here
+//
+//    renderPage($response->$form);
+//});
+
     $formController = new \App\Controllers\FormController($this->db);
     $objectController = new \App\Controllers\ObjectController($this->db);
     $userController = new \App\Controllers\UserController($this->db);
@@ -70,23 +76,19 @@ $app->post('/login', function ($request, $response, $args) use ($app) {
 
 })->setName('login');
 
-$app->get('/signup', function ($request, $response, $args) {
-    $formController = new \App\Controllers\FormController($this->db);
-
-    return $this->twig->render($response, 'signup.twig', [
-        'formsAll' => $formController->returnAllFormDetails()
-    ]);
-})->setName('signup');
 
 $app->post('/register', function ($request, $response, $args) {
     $userController = new \App\Controllers\UserController($this->db);
-    $registerUser = $userController->registerUser($request->getParams());
+    $isRegisterSuccessful = $userController->registerUser($request->getParams());
 
-    die();
+    if ($isRegisterSuccessful) {
+        //do nothing
+    } else if (!$isRegisterSuccessful) {
+        return $response->withJson(array('msgTitle' => 'User already exists', 'msgBody' => 'A user with this email address already exists. Please try again.'));
+    } else {
+        return $response->withJson(array('msgTitle' => 'Error','msgBody' => 'Error: ' . $isRegisterSuccessful));
+    }
 
-//    return $this->twig->render($response, 'signup.twig', [
-//        'formsAll' => $formController->returnAllFormDetails()
-//    ]);
 })->setName('register');
 
 $app->get('/logout', function ($request, $response, $args) {
@@ -100,3 +102,14 @@ $app->get('/admin', function ($request, $response, $args) {
 
     echo 'admin panel here';
 })->setName('admin');
+
+
+
+
+//$app->get('/signup', function ($request, $response, $args) {
+//    $formController = new \App\Controllers\FormController($this->db);
+//
+//    return $this->twig->render($response, 'signup.twig', [
+//        'formsAll' => $formController->returnAllFormDetails()
+//    ]);
+//})->setName('signup');
