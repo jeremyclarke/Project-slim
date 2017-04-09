@@ -66,12 +66,24 @@ $app->post('/login', function ($request, $response, $args) use ($app) {
     $userController = new \App\Controllers\UserController($this->db);
     $isUserLoggedIn = $userController->loginUser($request->getParams());
 
-    if ($isUserLoggedIn) {
-        //do nothing
-    } else if (!$isUserLoggedIn) {
-        return $response->withJson(array('msg' => 'Incorrect email address or password. Please try again.'));
+    if (is_bool($isUserLoggedIn)) {
+        if ($isUserLoggedIn) {
+            return $response->withJson(
+                array(
+                    'success' => true,
+                    'msgTitle' => 'Logged in.',
+                    'msgBody' => 'Redirecting to the home page...'
+                ));
+        } else if (!$isUserLoggedIn) {
+            return $response->withJson(
+                array('success' => false,
+                    'msgBody' => 'Email address or password incorrect. Please try again.'
+                ));
+        }
     } else {
-        return $response->withJson(array('msg' => 'Error: ' . $isUserLoggedIn));
+        return $response->withJson(array(
+            'success' => false,
+            'msgBody' => 'Error: ' . $isUserLoggedIn));
     }
 
 })->setName('login');
@@ -81,39 +93,55 @@ $app->post('/register', function ($request, $response, $args) {
     $userController = new \App\Controllers\UserController($this->db);
     $isRegisterSuccessful = $userController->registerUser($request->getParams());
 
-    if ($isRegisterSuccessful) {
-        //do nothing
-    } else if (!$isRegisterSuccessful) {
-        return $response->withJson(array('msgTitle' => 'User already exists', 'msgBody' => 'A user with this email address already exists. Please try again.'));
+    if (is_bool($isRegisterSuccessful)) {
+        if ($isRegisterSuccessful) {
+            return $response->withJson(
+                array(
+                    'success' => true,
+                    'msgTitle' => 'Registration successful!',
+                    'msgBody' => 'Thanks! Your account has been registered successfully. You can now login from the home page.'
+                ));
+        } else if (!$isRegisterSuccessful) {
+            return $response->withJson(
+                array('success' => false,
+                    'msgTitle' => 'User already exists',
+                    'msgBody' => 'A user with this email address already exists. Please try again.'
+                ));
+        }
     } else {
-        return $response->withJson(array('msgTitle' => 'Error', 'msgBody' => 'Error: ' . $isRegisterSuccessful));
+        return $response->withJson(array(
+            'success' => false,
+            'msgTitle' => 'Error',
+            'msgBody' => 'Details: ' . $isRegisterSuccessful));
     }
-
 })->setName('register');
 
-$app->get('/logout', function ($request, $response, $args) {
 
+$app->get('/logout', function ($request, $response, $args) {
     session_start();
     unset($_SESSION["user"]);
     return $response->withStatus(302)->withHeader('Location', '/');
 })->setName('logout');
 
+
 $app->get('/admin', function ($request, $response, $args) {
     echo 'admin panel here';
 })->setName('admin');
+
 
 $app->post('/forgot-password', function ($request, $response, $args) {
     $userController = new \App\Controllers\UserController($this->db);
     $isResetSuccessful = $userController->resetPassword($request->getParams());
 
-    if ($isResetSuccessful) {
-        //do nothing
-    } else if (!$isResetSuccessful) {
-        return $response->withJson(array('msgTitle' => 'User does not exist.', 'msgBody' => 'No user exists with that email address. Please try again.'));
+    if (is_bool($isResetSuccessful)) {
+        if ($isResetSuccessful) {
+            return $response->withJson(array('success' => true, 'msgTitle' => 'Email sent!', 'msgBody' => 'Thanks! An email has been sent to your email address with further instructions.'));
+        } else if (!$isResetSuccessful) {
+            return $response->withJson(array('success' => false, 'msgTitle' => 'User does not exist.', 'msgBody' => 'No user exists with that email address. Please try again.'));
+        }
     } else {
-        return $response->withJson(array('msgTitle' => 'Error', 'msgBody' => 'Error: ' . $isRegisterSuccessful));
+        return $response->withJson(array('success' => false, 'msgTitle' => 'Error', 'msgBody' => 'Details: ' . $isResetSuccessful));
     }
-    
 })->setName('forgotPassword');
 
 

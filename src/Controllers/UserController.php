@@ -123,6 +123,7 @@ class UserController
     function resetPassword($params)
     {
         $this->email = trim($params['email']);
+
         try {
             $stmt = $this->dbconn->prepare("SELECT COUNT(email) AS num FROM project.users WHERE email = :userEmail");
             $stmt->bindParam("userEmail", $this->email, \PDO::PARAM_STR);
@@ -132,8 +133,7 @@ class UserController
 
             if ($row['num'] > 0) {
 
-
-
+                return true;
             } else {
                 return false; //user doesn't exist
             }

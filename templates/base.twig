@@ -81,7 +81,7 @@
             {#</ul>#}
             <ul class="nav navbar-nav navbar-right">
                 {% if user is not defined %}
-                <li><a href="#" data-toggle="modal" data-target="#loginModal">Login</a></li>
+                <li><a href="#" data-toggle="modal" data-target="#loginModal">Login/Register</a></li>
                 {% else %}
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -120,7 +120,6 @@
 {% include 'forgotpassword.twig' %}
 
 
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="/js/sweetalert.min.js"></script>
@@ -139,9 +138,11 @@
         posting.done(function (data) {
             console.log(data);
 
-            if (data.msg) {
+            if (!data.success) {
 
                 $(".incorrectLogin").show();
+                $(".incorrectLogin").text(data.msgBody);
+
                 $("#loginModal").addClass("animated shake").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',
                     function () {
                         $("#loginModal").removeClass("animated shake");
@@ -149,7 +150,8 @@
             } else {
                 $(".incorrectLogin").hide();
                 swal({
-                        title: "Logged in",
+                        title: data.msgTitle,
+                        text: data.msgBody,
                         type: "success",
                         timer: 0,
                         showConfirmButton: false
@@ -176,7 +178,7 @@
         posting.done(function (data) {
             console.log(data);
 
-            if (data) {
+            if (!data.success) {
                 swal({
                     title: data.msgTitle,
                     text: data.msgBody,
@@ -185,8 +187,8 @@
                 });
             } else {
                 swal({
-                        title: "Registered successfully",
-                        text: "Thanks! Your account has been registered successfully. You can now login from the home page.",
+                        title: data.msgTitle,
+                        text: data.msgBody,
                         type: "success",
                         showConfirmButton: true
                     },
@@ -212,7 +214,7 @@
         posting.done(function (data) {
             console.log(data);
 
-            if (data) {
+            if (!data.success) {
                 swal({
                     title: data.msgTitle,
                     text: data.msgBody,
@@ -221,8 +223,8 @@
                 });
             } else {
                 swal({
-                        title: "Registered successfully",
-                        text: "Thanks! Your account has been registered successfully. You can now login from the home page.",
+                        title: data.msgTitle,
+                        text: data.msgBody,
                         type: "success",
                         showConfirmButton: true
                     },
