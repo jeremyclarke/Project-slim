@@ -119,4 +119,26 @@ class UserController
             die($e->getMessage());
         }
     }
+
+    function resetPassword($params)
+    {
+        $this->email = trim($params['email']);
+        try {
+            $stmt = $this->dbconn->prepare("SELECT COUNT(email) AS num FROM project.users WHERE email = :userEmail");
+            $stmt->bindParam("userEmail", $this->email, \PDO::PARAM_STR);
+
+            $stmt->execute();
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if ($row['num'] > 0) {
+
+
+
+            } else {
+                return false; //user doesn't exist
+            }
+        } catch (\PDOException $e) {
+            return ($e->getMessage());
+        }
+    }
 }

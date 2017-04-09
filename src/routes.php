@@ -86,7 +86,7 @@ $app->post('/register', function ($request, $response, $args) {
     } else if (!$isRegisterSuccessful) {
         return $response->withJson(array('msgTitle' => 'User already exists', 'msgBody' => 'A user with this email address already exists. Please try again.'));
     } else {
-        return $response->withJson(array('msgTitle' => 'Error','msgBody' => 'Error: ' . $isRegisterSuccessful));
+        return $response->withJson(array('msgTitle' => 'Error', 'msgBody' => 'Error: ' . $isRegisterSuccessful));
     }
 
 })->setName('register');
@@ -99,9 +99,22 @@ $app->get('/logout', function ($request, $response, $args) {
 })->setName('logout');
 
 $app->get('/admin', function ($request, $response, $args) {
-
     echo 'admin panel here';
 })->setName('admin');
+
+$app->post('/forgot-password', function ($request, $response, $args) {
+    $userController = new \App\Controllers\UserController($this->db);
+    $isResetSuccessful = $userController->resetPassword($request->getParams());
+
+    if ($isResetSuccessful) {
+        //do nothing
+    } else if (!$isResetSuccessful) {
+        return $response->withJson(array('msgTitle' => 'User does not exist.', 'msgBody' => 'No user exists with that email address. Please try again.'));
+    } else {
+        return $response->withJson(array('msgTitle' => 'Error', 'msgBody' => 'Error: ' . $isRegisterSuccessful));
+    }
+    
+})->setName('forgotPassword');
 
 
 

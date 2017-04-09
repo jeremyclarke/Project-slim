@@ -117,6 +117,8 @@
 
 {% include 'login.twig' %}
 {% include 'register.twig' %}
+{% include 'forgotpassword.twig' %}
+
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -169,6 +171,42 @@
 
         // Send the data using post
         var posting = $.post("{{ path_for('register') }}", $("#registerForm").serialize());
+
+        // Show the results
+        posting.done(function (data) {
+            console.log(data);
+
+            if (data) {
+                swal({
+                    title: data.msgTitle,
+                    text: data.msgBody,
+                    type: "warning",
+                    showConfirmButton: true
+                });
+            } else {
+                swal({
+                        title: "Registered successfully",
+                        text: "Thanks! Your account has been registered successfully. You can now login from the home page.",
+                        type: "success",
+                        showConfirmButton: true
+                    },
+                    function () {
+                        location.reload();
+                    });
+            }
+        });
+    });
+</script>
+
+<script> // RESET PASSWORD SUBMISSION
+    // Attach a submit handler to the form
+    $("#forgotPasswordForm").submit(function (event) {
+
+        // Stop form from submitting normally
+        event.preventDefault();
+
+        // Send the data using post
+        var posting = $.post("{{ path_for('forgotPassword') }}", $("#forgotPasswordForm").serialize());
 
         // Show the results
         posting.done(function (data) {
