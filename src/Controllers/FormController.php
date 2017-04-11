@@ -2,13 +2,11 @@
 
 namespace App\Controllers;
 
-class FormController
+class FormController extends Controller
 {
-    private $dbconn;
-
-    function __construct($db)
+    function __construct($db, $twig, $mail, $rlib)
     {
-        $this->dbconn = $db;
+        parent::__construct($db, $twig, $mail, $rlib);
     }
 
     function returnUsersPrivateFormDetails($userID)
@@ -17,7 +15,7 @@ class FormController
                 WHERE private = 1 
                 AND ID IN (SELECT form_id from project.permissions where user_id = :userID)';
 
-        $stmt = $this->dbconn->prepare($sql);
+        $stmt = $this->db->prepare($sql);
         $stmt->bindParam("userID", $userID, \PDO::PARAM_INT);
         $stmt->execute();
 
@@ -30,7 +28,7 @@ class FormController
 //    {
 //        $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms WHERE private = 0';
 //
-//        $stmt = $this->dbconn->prepare($sql);
+//        $stmt = $this->db->prepare($sql);
 //        $stmt->execute();
 //
 //        $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
@@ -42,7 +40,7 @@ class FormController
     {
         $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms';
 
-        $stmt = $this->dbconn->prepare($sql);
+        $stmt = $this->db->prepare($sql);
         $stmt->execute();
 
         $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
@@ -54,7 +52,7 @@ class FormController
 //    function checkIfFormPublic($formID)
 //    {
 //        try { //first check if form is private or not, if not, allow it to be viewed
-//            $stmt = $this->dbconn->prepare("SELECT private FROM project.forms WHERE ID = :formID");
+//            $stmt = $this->db->prepare("SELECT private FROM project.forms WHERE ID = :formID");
 //            $stmt->bindParam("formID", $formID, \PDO::PARAM_INT);
 //
 //            $stmt->execute();
@@ -72,11 +70,10 @@ class FormController
 //    }
 
 
-
 //    function returnAllFormDetailsPrivate($userID)
 //    {
 //        $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms WHERE private = 1 AND ID IN (SELECT form_id from project.permissions where user_id = :userID)';
-//        $stmt = $this->dbconn->prepare($sql);
+//        $stmt = $this->db->prepare($sql);
 //        $stmt->bindParam("userID", $userID, \PDO::PARAM_INT);
 //
 //        $stmt->execute();
@@ -89,7 +86,7 @@ class FormController
     function submitForm($params, $formID, $response)
     {
         $sql = "SELECT SQL_insert_execute_query FROM project.objects WHERE form_id = :formID AND type = 'button' LIMIT 1";
-        $stmt = $this->dbconn->prepare($sql);
+        $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':formID', $formID, \PDO::PARAM_INT);
         $stmt->execute();
 
@@ -101,7 +98,7 @@ class FormController
             }
 
             try {
-                $stmt = $this->dbconn->prepare($actionSQL);
+                $stmt = $this->db->prepare($actionSQL);
 
                 for ($i = 0; $i < sizeof($params); $i++) {
                     $stmt->bindParam($i + 1, array_values($params)[$i], \PDO::PARAM_STR, 1);

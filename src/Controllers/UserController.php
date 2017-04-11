@@ -2,28 +2,31 @@
 
 namespace App\Controllers;
 
+ini_set('display_startup_errors', 1);
+ini_set('display_errors', 1);
+error_reporting(-1);
 
-class UserController
+class UserController extends Controller
 {
-    private $dbconn;
     private $email;
     private $password;
     private $firstName;
     private $lastName;
 
-    function __construct($db)
+    function __construct($db, $twig, $mail, $rlib)
     {
-        $this->dbconn = $db;
+        parent::__construct($db, $twig, $mail, $rlib);
     }
 
     function loginUser($params)
     {
         $this->email = trim($params['email']);
         $this->password = trim($params['password']);
+        $this->password = trim($params['password']);
 
         try {
             //$hash_password = password_hash($this->password, PASSWORD_BCRYPT);
-            $stmt = $this->dbconn->prepare("SELECT * FROM project.users WHERE email=:userEmail");;// AND password=:hash_password");
+            $stmt = $this->db->prepare("SELECT * FROM project.users WHERE email=:userEmail");;// AND password=:hash_password");
             $stmt->bindParam("userEmail", $this->email, \PDO::PARAM_STR);
             //$stmt->bindParam("hash_password", $hash_password, \PDO::PARAM_STR);
             $stmt->execute();
@@ -55,7 +58,7 @@ class UserController
         $this->lastName = trim($params['lastName']);
 
         try {
-            $stmt = $this->dbconn->prepare("SELECT COUNT(email) AS num FROM project.users WHERE email = :userEmail");
+            $stmt = $this->db->prepare("SELECT COUNT(email) AS num FROM project.users WHERE email = :userEmail");
             $stmt->bindParam("userEmail", $this->email, \PDO::PARAM_STR);
 
             $stmt->execute();
@@ -67,7 +70,7 @@ class UserController
 
                 $hash_password = password_hash($this->password, PASSWORD_BCRYPT);
 
-                $stmt = $this->dbconn->prepare("INSERT INTO project.users (first_name, last_name, email, password) VALUES (:first_name, :last_name, :email, :password)");
+                $stmt = $this->db->prepare("INSERT INTO project.users (first_name, last_name, email, password) VALUES (:first_name, :last_name, :email, :password)");
                 $stmt->bindParam("first_name", $this->firstName, \PDO::PARAM_STR);
                 $stmt->bindParam("last_name", $this->lastName, \PDO::PARAM_STR);
                 $stmt->bindParam("email", $this->email, \PDO::PARAM_STR);
@@ -76,6 +79,11 @@ class UserController
                 $result = $stmt->execute();
 
                 if ($result) {
+                    $this->mail->send('emails/registered.twig', ['firstName' => $this->firstName, 'lastName' => $this->lastName],
+                        function ($message) {
+                            $message->to($this->email);
+                            $message->subject('Registered successfully!');
+                        });
                     return true; //registered successfully
                 }
             }
@@ -88,7 +96,7 @@ class UserController
     function verifyUser($formID)
     {
         try { //first check if form is private or not, if not, allow it to be viewed
-            $stmt = $this->dbconn->prepare("SELECT private FROM project.forms WHERE ID = :formID");
+            $stmt = $this->db->prepare("SELECT private FROM project.forms WHERE ID = :formID");
             $stmt->bindParam("formID", $formID, \PDO::PARAM_INT);
 
             $stmt->execute();
@@ -103,7 +111,7 @@ class UserController
         }
 
         try { //if its private, check the user logged it should be able to access it
-            $stmt = $this->dbconn->prepare("SELECT COUNT(user_id) AS num FROM project.permissions WHERE form_ID = :formID AND user_ID = :userID");
+            $stmt = $this->db->prepare("SELECT COUNT(user_id) AS num FROM project.permissions WHERE form_ID = :formID AND user_ID = :userID");
             $stmt->bindParam("formID", $formID, \PDO::PARAM_INT);
             $stmt->bindParam("userID", $_SESSION['user']->id, \PDO::PARAM_INT);
 
@@ -120,12 +128,12 @@ class UserController
         }
     }
 
-    function resetPassword($params)
+    function startResetPassword($params)
     {
         $this->email = trim($params['email']);
 
         try {
-            $stmt = $this->dbconn->prepare("SELECT COUNT(email) AS num FROM project.users WHERE email = :userEmail");
+            $stmt = $this->db->prepare("SELECT COUNT(email) AS num FROM project.users WHERE email = :userEmail");
             $stmt->bindParam("userEmail", $this->email, \PDO::PARAM_STR);
 
             $stmt->execute();
@@ -133,12 +141,47 @@ class UserController
 
             if ($row['num'] > 0) {
 
-                return true;
+                $identifier = $this->rlib->generateString(128);
+                $hashedIdentifier = password_hash($identifier, PASSWORD_BCRYPT);
+
+                $stmt = $this->db->prepare("UPDATE project.users SET recover_pwd_hash = :recoverHash WHERE email = :userEmail");
+                $stmt->bindParam("recoverHash", $hashedIdentifier, \PDO::PARAM_STR);
+                $stmt->bindParam("userEmail", $this->email, \PDO::PARAM_STR);
+                $stmt->execute();
+
+                $emailSuccess = $this->mail->send('emails/passwordreset.twig', ['identifier' => $identifier, 'email' => $this->email],
+                    function ($message) {
+                        $message->to($this->email);
+                        $message->subject('Finish resetting your password');
+                    });
+
+                if (is_bool($emailSuccess) && ($emailSuccess)) {
+                    return true;
+                } else {
+                    return $emailSuccess;
+                }
             } else {
+                //die('why');
                 return false; //user doesn't exist
             }
         } catch (\PDOException $e) {
             return ($e->getMessage());
         }
+    }
+
+    function finishResetPassword($params)
+    {
+        $email = trim($params['email']);
+        $identifier = trim($params['identifier']);
+//        $hashedIdentifier
+//        (password_verify($this->password, $data->password)
+
+        $stmt = $this->db->prepare("SELECT first_name FROM project.users WHERE email = :userEmail");
+        $stmt->bindParam("userEmail", $email, \PDO::PARAM_STR);
+        $stmt->execute();
+        $row = $stmt->fetch(\PDO::FETCH_OBJ);
+
+        print_r($row);
+
     }
 }

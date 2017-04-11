@@ -22,6 +22,17 @@ return [
             'user' => 'jeremy',
             'pass' => 'Xbs5S57g',
             'dbname' => 'project',
+        ],
+
+        // PHPMailer
+        'mail' => [
+            'host' => 'smtp.zoho.com',
+            'SMTPAuth' => true,
+            'user' => 'no-reply@jeremyclarke.co.uk',
+            'pass' => '54^9P@2tyg60',
+            'SMTPSecure' => 'tls',
+            'port' => 587,
         ]
+
     ],
 ];

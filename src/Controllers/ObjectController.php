@@ -2,20 +2,19 @@
 
 namespace App\Controllers;
 
-class ObjectController
+class ObjectController extends Controller
 {
-    private $dbconn;
     private $statementResults;
 
-    function __construct($db)
+    function __construct($db, $twig, $mail, $rlib)
     {
-        $this->dbconn = $db;
+        parent::__construct($db, $twig, $mail, $rlib);
     }
 
     function returnAllFormObjects($formID)
     {
         $sql = 'SELECT ID, ID, form_ID, type, SQL_populate_query, SQL_insert_execute_query, caption, required FROM project.objects WHERE form_ID = :formID ORDER BY -obj_order DESC';
-        $stmt = $this->dbconn->prepare($sql);
+        $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':formID', $formID, \PDO::PARAM_INT);
         $stmt->execute();
         $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE);
@@ -30,7 +29,7 @@ class ObjectController
 
     function getFormObjectSQLResult($sql, $id)
     {
-        $stmt = $this->dbconn->prepare($sql);
+        $stmt = $this->db->prepare($sql);
         $stmt->execute();
         //$this->statementResults[$id] = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
         $this->statementResults[$id] = $stmt->fetchAll(\PDO::FETCH_NUM);

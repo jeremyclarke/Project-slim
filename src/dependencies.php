@@ -35,13 +35,13 @@ $container['db'] = function ($c) {
 };
 
 //twig
-$container['twig'] = function ($container) {
+$container['twig'] = function ($c) {
     $twig = new \Slim\Views\Twig(__DIR__ . '/../templates', [
         'cache' => false // todo:  turn on before live
     ]);
     // Instantiate and add Slim specific extension
-    $basePath = rtrim(str_ireplace('index.php', '', $container['request']->getUri()->getBasePath()), '/');
-    $twig->addExtension(new Slim\Views\TwigExtension($container['router'], $basePath));
+    $basePath = rtrim(str_ireplace('index.php', '', $c['request']->getUri()->getBasePath()), '/');
+    $twig->addExtension(new Slim\Views\TwigExtension($c['router'], $basePath));
 
     $twig->getEnvironment()->addGlobal(
         'rootURL',
@@ -49,3 +49,69 @@ $container['twig'] = function ($container) {
     );
     return $twig;
 };
+
+// PHPMailer
+$container['mailer'] = function ($c) {
+    $mailer = new PHPMailer;
+    $settings = $c->get('settings')['mail'];
+
+    $mailer->isSMTP();
+    $mailer->Host = $settings['host'];
+    $mailer->SMTPAuth = $settings['SMTPAuth'];
+    $mailer->Username = $settings['user'];
+    $mailer->Password = $settings['pass'];
+    $mailer->SMTPSecure = $settings['SMTPSecure'];
+    $mailer->Port = $settings['port'];
+    $mailer->setFrom($settings['user']);
+
+    return new \App\Controllers\Mail\MailController($mailer, $c->twig);
+};
+
+// randomlib
+$container['randomlib'] = function ($c) {
+    $factory = new RandomLib\Factory;
+    return $factory->getMediumStrengthGenerator();
+};
+
+//////////////////////////////////////////////////////////////////
+
+$container['UserController'] = function ($c) {
+    $db = $c->db;
+    $twig = $c->twig;
+    $mailer = $c->mailer;
+    $rlib = $c->randomlib;
+
+    $controller = new \App\Controllers\UserController($db, $twig, $mailer, $rlib);
+    return $controller;
+};
+
+$container['FormController'] = function ($c) {
+    $db = $c->db;
+    $twig = $c->twig;
+    $mailer = $c->mailer;
+    $rlib = $c->randomlib;
+
+    $controller = new \App\Controllers\FormController($db, $twig, $mailer, $rlib);
+    return $controller;
+};
+
+$container['ObjectController'] = function ($c) {
+    $db = $c->db;
+    $twig = $c->twig;
+    $mailer = $c->mailer;
+    $rlib = $c->randomlib;
+
+    $controller = new \App\Controllers\ObjectController($db, $twig, $mailer, $rlib);
+    return $controller;
+};
+
+//
+//$container['MailContoller'] = function ($c) {
+//    $db = $c->db;
+//    $twig = $c->twig;
+//    $mailer = $c->mailer;
+//    $rlib = $c->randomlib;
+//
+//    $controller = new \App\Controllers\Mail\MailController($db, $twig, $mailer, $rlib);
+//    return $controller;
+//};
