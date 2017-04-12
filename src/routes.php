@@ -199,8 +199,6 @@ $app->post('/password-reset', function ($request, $response, $args) {
         die('na');
 
     }
-
-    echo 'poste';
 //    return $this->twig->render($response, 'resetpassword.twig',
 //        [
 ////            'formsAll' => $formController->returnAllFormDetails(),
@@ -211,12 +209,17 @@ $app->post('/password-reset', function ($request, $response, $args) {
 })->setName('resetPasswordPost');
 
 
+$app->post('/change-password', function ($request, $response, $args) {
+    $userController = $this->UserController;
+    $isChangePwdSuccessful = $userController->changePassword($request->getParams());
 
-
-//$app->get('/signup', function ($request, $response, $args) {
-//    $formController = new \App\Controllers\FormController($this->db);
-//
-//    return $this->twig->render($response, 'signup.twig', [
-//        'formsAll' => $formController->returnAllFormDetails()
-//    ]);
-//})->setName('signup');
+    if (is_bool($isChangePwdSuccessful)) {
+        if ($isChangePwdSuccessful) {
+            return $response->withJson(array('success' => true, 'msgTitle' => 'Password changed.', 'msgBody' => 'Your password has been changed successfully.'));
+        } else if (!$isChangePwdSuccessful) {
+            return $response->withJson(array('success' => false, 'msgTitle' => 'Password incorrect', 'msgBody' => 'Please check your current password and try again.'));
+        }
+    } else {
+        return $response->withJson(array('success' => false, 'msgTitle' => 'Error', 'msgBody' => 'Details: ' . $isChangePwdSuccessful));
+    }
+})->setName('changePassword');

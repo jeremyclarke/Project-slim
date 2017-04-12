@@ -9,7 +9,7 @@ ini_set('display_errors', 1);
 error_reporting(-1);
 
 class MailController// extends Controller
-
+    // todo: Sweet alert response does not work if email debugging switched on
 {
     private $mail;
     private $twig;

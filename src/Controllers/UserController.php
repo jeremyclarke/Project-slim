@@ -161,7 +161,6 @@ class UserController extends Controller
                     return $emailSuccess;
                 }
             } else {
-                //die('why');
                 return false; //user doesn't exist
             }
         } catch (\PDOException $e) {
@@ -184,4 +183,39 @@ class UserController extends Controller
         print_r($row);
 
     }
+
+
+    function changePassword($params)
+    {
+        $currentPassword = trim($params['currentPassword']);
+        $newPassword = trim($params['newPassword']);
+        $email = trim($params['userEmail']);
+
+        $stmt = $this->db->prepare("SELECT email, password FROM project.users WHERE email = :userEmail LIMIT 1");
+        $stmt->bindParam("userEmail", $email, \PDO::PARAM_STR);
+
+        $stmt->execute();
+        $user = $stmt->fetch(\PDO::FETCH_OBJ);
+
+        if (($user) && password_verify($currentPassword, $user->password)) {
+
+            $hash_password = password_hash($newPassword, PASSWORD_BCRYPT);
+
+            $stmtPwd = $this->db->prepare("UPDATE project.users SET password = :password WHERE email = :email");
+            $stmtPwd->bindParam("password", $hash_password, \PDO::PARAM_STR);
+            $stmtPwd->bindParam("email", $email, \PDO::PARAM_STR);
+
+            $result = $stmtPwd->execute();
+
+            if ($result) {
+                //die('done');
+                return true; //changed successfully
+            }
+        } else {
+            return false;
+            //die('na');
+        }
+
+    }
+
 }

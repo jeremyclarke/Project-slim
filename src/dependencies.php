@@ -56,6 +56,10 @@ $container['mailer'] = function ($c) {
     $settings = $c->get('settings')['mail'];
 
     $mailer->isSMTP();
+
+//    $mailer->SMTPDebug = 2;
+//    $mailer->Debugoutput = 'html';
+
     $mailer->Host = $settings['host'];
     $mailer->SMTPAuth = $settings['SMTPAuth'];
     $mailer->Username = $settings['user'];
@@ -63,6 +67,7 @@ $container['mailer'] = function ($c) {
     $mailer->SMTPSecure = $settings['SMTPSecure'];
     $mailer->Port = $settings['port'];
     $mailer->setFrom($settings['user']);
+
 
     return new \App\Controllers\Mail\MailController($mailer, $c->twig);
 };

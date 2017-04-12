@@ -51,6 +51,51 @@
     </div>
 </div>
 
+<script> // LOGIN FORM SUBMISSION
+    // Attach a submit handler to the form
+    $("#loginForm").submit(function (event) {
+
+        // Stop form from submitting normally
+        event.preventDefault();
+
+        $('#loginSubmit').prop('disabled', true);
+        $("#loginSubmit").text("Working...");
+
+        // Send the data using post
+        var posting = $.post("{{ path_for('login') }}", $('#loginForm').serialize());
+
+        // Show the results
+        posting.done(function (data) {
+            console.log(data);
+
+            if (!data.success) {
+                $(".incorrectLogin").show();
+                $(".incorrectLogin span").text(data.msgBody);
+
+                $('#loginSubmit').prop('disabled', false);
+                $("#loginSubmit").text("Login");
+
+                $("#loginModal").addClass("animated shake").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',
+                    function () {
+                        $("#loginModal").removeClass("animated shake");
+                    });
+            } else {
+                $(".incorrectLogin").hide();
+                swal({
+                        title: data.msgTitle,
+                        text: data.msgBody,
+                        type: "success",
+                        timer: 0,
+                        showConfirmButton: false
+                    },
+                    function () {
+                        location.reload();
+                    });
+            }
+        });
+    });
+</script>
+
 
 
 

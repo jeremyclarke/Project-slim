@@ -25,11 +25,20 @@ return [
         ],
 
         // PHPMailer
+//        'mail' => [
+//            'host' => 'smtp.zoho.com',
+//            'SMTPAuth' => true,
+//            'user' => 'no-reply@jeremyclarke.co.uk',
+//            'pass' => '54^9P@2tyg60',
+//            'SMTPSecure' => 'tls',
+//            'port' => 587,
+//        ]
+
         'mail' => [
-            'host' => 'smtp.zoho.com',
+            'host' => 'smtp.gmail.com',
             'SMTPAuth' => true,
-            'user' => 'no-reply@jeremyclarke.co.uk',
-            'pass' => '54^9P@2tyg60',
+            'user' => 'jeremyclarke100@gmail.com',
+            'pass' => 'bUf8e49h4b',
             'SMTPSecure' => 'tls',
             'port' => 587,
         ]
