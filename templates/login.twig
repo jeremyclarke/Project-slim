@@ -22,7 +22,7 @@
                     </div>
 
                     <div class="incorrectLogin">
-                        <p>Email address or password incorrect. Please try again.</p>
+                        <p></p>
                     </div>
 
                     {#<div class="checkbox">#}
@@ -35,16 +35,20 @@
                     </button>
 
                     {#<button type="button" class="btn btn-default pull-right" data-dismiss="modal"></span>#}
-                        {#Close#}
+                    {#Close#}
                     {#</button>#}
 
                 </form>
             </div>
             <div class="modal-footer">
                 {#<span class="pull-left" data-toggle="modal" data-target="#registerModal" data-dismiss="modal">Not registered? <a href="#">Sign up</a></span>#}
-                <button type="button" class="btn btn-default pull-left" data-toggle="modal" data-target="#registerModal" data-dismiss="modal"></span>Register</button>
+                <button type="button" class="btn btn-default pull-left" data-toggle="modal" data-target="#registerModal"
+                        data-dismiss="modal"></span>Register
+                </button>
 
-                <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#forgotPasswordModal" data-dismiss="modal"></span>Forgot password</button>
+                <button type="button" class="btn btn-default pull-right" data-toggle="modal"
+                        data-target="#forgotPasswordModal" data-dismiss="modal"></span>Forgot password
+                </button>
                 {#<span class="pull-right"><a href="#">Forgot password?</a></span>#}
             </div>
         </div>
@@ -58,8 +62,7 @@
         // Stop form from submitting normally
         event.preventDefault();
 
-        $('#loginSubmit').prop('disabled', true);
-        $("#loginSubmit").text("Working...");
+        $('#loginSubmit').prop('disabled', true).text("Working...");
 
         // Send the data using post
         var posting = $.post("{{ path_for('login') }}", $('#loginForm').serialize());
@@ -70,22 +73,23 @@
 
             if (!data.success) {
                 $(".incorrectLogin").show();
-                $(".incorrectLogin span").text(data.msgBody);
+                $(".incorrectLogin p").text(data.msgBody);
 
-                $('#loginSubmit').prop('disabled', false);
-                $("#loginSubmit").text("Login");
+                $('#loginSubmit').prop('disabled', false).text("Login");
 
                 $("#loginModal").addClass("animated shake").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',
                     function () {
                         $("#loginModal").removeClass("animated shake");
                     });
+
+
             } else {
                 $(".incorrectLogin").hide();
                 swal({
                         title: data.msgTitle,
                         text: data.msgBody,
                         type: "success",
-                        timer: 0,
+                        //timer: 0,
                         showConfirmButton: false
                     },
                     function () {

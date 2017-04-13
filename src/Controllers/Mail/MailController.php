@@ -2,8 +2,6 @@
 
 namespace App\Controllers\Mail;
 
-use App\Controllers\Controller;
-
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 error_reporting(-1);
@@ -13,10 +11,6 @@ class MailController// extends Controller
 {
     private $mail;
     private $twig;
-//    function __construct($db, $twig, $mail, $rlib)
-//    {
-//        parent::__construct($db, $twig, $mail, $rlib);
-//    }
 
     function __construct($mailer, $twig)
     {
@@ -24,7 +18,6 @@ class MailController// extends Controller
         $this->twig = $twig;
     }
 
-    public
     function send($template, $data, $callback)
     {
         $message = new Message($this->mail);
@@ -35,10 +28,11 @@ class MailController// extends Controller
 
         call_user_func($callback, $message);
 
-        if (!$this->mail->send()) {
-            return 'Mailer Error: ' . $this->mail->ErrorInfo;
-        } else {
+//        $this->mail->send();
+
+        if ($this->mail->send()) {
             return true;
         }
+
     }
 }

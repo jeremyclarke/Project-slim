@@ -52,7 +52,7 @@ $container['twig'] = function ($c) {
 
 // PHPMailer
 $container['mailer'] = function ($c) {
-    $mailer = new PHPMailer;
+    $mailer = new PHPMailer(true);
     $settings = $c->get('settings')['mail'];
 
     $mailer->isSMTP();
@@ -67,7 +67,6 @@ $container['mailer'] = function ($c) {
     $mailer->SMTPSecure = $settings['SMTPSecure'];
     $mailer->Port = $settings['port'];
     $mailer->setFrom($settings['user']);
-
 
     return new \App\Controllers\Mail\MailController($mailer, $c->twig);
 };

@@ -24,7 +24,7 @@ return [
             'dbname' => 'project',
         ],
 
-        // PHPMailer
+        // PHPMailer //todo: check what happens when mail server is broken
 //        'mail' => [
 //            'host' => 'smtp.zoho.com',
 //            'SMTPAuth' => true,

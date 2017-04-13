@@ -18,39 +18,57 @@ class UserController extends Controller
         parent::__construct($db, $twig, $mail, $rlib);
     }
 
-    function loginUser($params)
+    function login($params)
     {
         $this->email = trim($params['email']);
         $this->password = trim($params['password']);
-        $this->password = trim($params['password']);
 
         try {
-            //$hash_password = password_hash($this->password, PASSWORD_BCRYPT);
-            $stmt = $this->db->prepare("SELECT * FROM project.users WHERE email=:userEmail");;// AND password=:hash_password");
+            $stmt = $this->db->prepare("SELECT * FROM project.users WHERE email=:userEmail");
             $stmt->bindParam("userEmail", $this->email, \PDO::PARAM_STR);
-            //$stmt->bindParam("hash_password", $hash_password, \PDO::PARAM_STR);
             $stmt->execute();
             $count = $stmt->rowCount();
             $data = $stmt->fetch(\PDO::FETCH_OBJ);
-            //$this->dbconn = null;
 
             if ($count) { //if user found
                 if (password_verify($this->password, $data->password)) { //if password is correct
-                    unset($data->password);
+
+                    unset($data->password); //delete password from data
+
                     $_SESSION['user'] = $data; // Storing user session value
-                    return true;
+
+                    $this->db = null;
+
+                    return array(
+                        'success' => true,
+                        'msgTitle' => 'Logged in..',
+                        'msgBody' => 'Redirecting to the homepage...'
+                    );
+
                 } else { //if password incorrect
-                    return false;
+                    return array(
+                        'success' => false,
+                        'msgTitle' => 'Incorrect password',
+                        'msgBody' => 'Password incorrect. Please try again.'
+                    );
                 }
             } else { //if user not found
-                return false;
+                return array(
+                    'success' => false,
+                    'msgTitle' => 'User does not exist',
+                    'msgBody' => 'Sorry, account associated to that email address.'
+                );
             }
-        } catch (PDOException $e) {
-            return $e->getMessage();
+        } catch (\PDOException $e) {
+            return array(
+                'success' => false,
+                'msgTitle' => 'Error',
+                'msgBody' => $e->getMessage()
+            );
         }
     }
 
-    function registerUser($params)
+    function register($params)
     {
         $this->email = trim($params['email']);
         $this->password = trim($params['password']);
@@ -60,13 +78,42 @@ class UserController extends Controller
         try {
             $stmt = $this->db->prepare("SELECT COUNT(email) AS num FROM project.users WHERE email = :userEmail");
             $stmt->bindParam("userEmail", $this->email, \PDO::PARAM_STR);
-
             $stmt->execute();
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if ($row['num'] > 0) {
-                return false; //user already exists
+                //user already exists
+                return array(
+                    'success' => false,
+                    'msgTitle' => 'Account already exists.',
+                    'msgBody' => 'This email address is already registered to an account.'
+                );
             } else {
+
+                if (strlen($this->password) <= 7) {
+                    return array('success' => false,
+                        'msgTitle' => 'Check password',
+                        'msgBody' => 'Please check your password length meets the required password complexity.'
+                    );
+                }
+                if (!preg_match('#[0-9]+#', $this->password)) {
+                    return array('success' => false,
+                        'msgTitle' => 'Check password',
+                        'msgBody' => 'Please check your password contains at least one number'
+                    );
+                }
+                if (!preg_match('#[a-z]+#', $this->password)) {
+                    return array('success' => false,
+                        'msgTitle' => 'Check password',
+                        'msgBody' => 'Please check your password contains at least one lowercase letter.'
+                    );
+                }
+                if (!preg_match('#[A-Z]+#', $this->password)) {
+                    return array('success' => false,
+                        'msgTitle' => 'Check password',
+                        'msgBody' => 'Please check your password contains at least one uppercase letter.'
+                    );
+                }
 
                 $hash_password = password_hash($this->password, PASSWORD_BCRYPT);
 
@@ -84,12 +131,21 @@ class UserController extends Controller
                             $message->to($this->email);
                             $message->subject('Registered successfully!');
                         });
-                    return true; //registered successfully
+
+                    return array( //registered successfully
+                        'success' => true,
+                        'msgTitle' => 'Registration successful!',
+                        'msgBody' => 'Thanks! Your account has been registered successfully. You can now login from the home page.'
+                    );
                 }
             }
 
         } catch (\PDOException $e) {
-            return ($e->getMessage());
+            return array(
+                'success' => false,
+                'msgTitle' => 'Error',
+                'msgBody' => $e->getMessage()
+            );
         }
     }
 
@@ -128,22 +184,31 @@ class UserController extends Controller
         }
     }
 
-    function startResetPassword($params)
+
+    function setRecoveryHash($params)
     {
         $this->email = trim($params['email']);
 
         try {
             $stmt = $this->db->prepare("SELECT COUNT(email) AS num FROM project.users WHERE email = :userEmail");
             $stmt->bindParam("userEmail", $this->email, \PDO::PARAM_STR);
-
             $stmt->execute();
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-            if ($row['num'] > 0) {
+        } catch (\PDOException $e) {
+            return array( //PDO error
+                'success' => false,
+                'msgTitle' => 'Database error',
+                'msgBody' => $e->getMessage()
+            );
+        }
 
-                $identifier = $this->rlib->generateString(128);
-                $hashedIdentifier = password_hash($identifier, PASSWORD_BCRYPT);
+        if ($row['num'] > 0) { //if user is found by email
 
+            $identifier = $this->rlib->generateString(128);
+            $hashedIdentifier = password_hash($identifier, PASSWORD_BCRYPT);
+
+            try {
                 $stmt = $this->db->prepare("UPDATE project.users SET recover_pwd_hash = :recoverHash WHERE email = :userEmail");
                 $stmt->bindParam("recoverHash", $hashedIdentifier, \PDO::PARAM_STR);
                 $stmt->bindParam("userEmail", $this->email, \PDO::PARAM_STR);
@@ -155,16 +220,33 @@ class UserController extends Controller
                         $message->subject('Finish resetting your password');
                     });
 
-                if (is_bool($emailSuccess) && ($emailSuccess)) {
-                    return true;
-                } else {
-                    return $emailSuccess;
-                }
-            } else {
-                return false; //user doesn't exist
+            } catch (\PDOException $e) {
+                return array( //PDO error
+                    'success' => false,
+                    'msgTitle' => 'Database error',
+                    'msgBody' => $e->getMessage()
+                );
+            } catch (\phpmailerException $e) {
+                return array( //PHPMailler error
+                    'success' => false,
+                    'msgTitle' => 'Error',
+                    'msgBody' => $e->errorMessage()
+                );
             }
-        } catch (\PDOException $e) {
-            return ($e->getMessage());
+
+            if (is_bool($emailSuccess) && ($emailSuccess)) {
+                return array( //Successful
+                    'success' => true,
+                    'msgTitle' => 'Email sent!',
+                    'msgBody' => 'An email has been sent to your email address with further instructions.'
+                );
+            }
+        } else {
+            return array( //user not found
+                'success' => false,
+                'msgTitle' => 'Unrecognised email address.',
+                'msgBody' => 'Sorry, that email address isn\'t associated to any account.'
+            );
         }
     }
 
@@ -189,33 +271,59 @@ class UserController extends Controller
     {
         $currentPassword = trim($params['currentPassword']);
         $newPassword = trim($params['newPassword']);
-        $email = trim($params['userEmail']);
+        $confirmNewPassword = trim($params['confirmNewPassword']);
+        $this->email = trim($params['userEmail']);
 
         $stmt = $this->db->prepare("SELECT email, password FROM project.users WHERE email = :userEmail LIMIT 1");
-        $stmt->bindParam("userEmail", $email, \PDO::PARAM_STR);
+        $stmt->bindParam("userEmail", $this->email, \PDO::PARAM_STR);
 
         $stmt->execute();
         $user = $stmt->fetch(\PDO::FETCH_OBJ);
 
-        if (($user) && password_verify($currentPassword, $user->password)) {
+        if (strlen($newPassword) <= 7) {
+            return false;
+        }
+        if (!preg_match('#[0-9]+#', $newPassword)) {
+            return false;
+        }
+        if (!preg_match('#[a-z]+#', $newPassword)) {
+            return false;
+        }
+        if (!preg_match('#[A-Z]+#', $newPassword)) {
+            return false;
+        }
+
+        if (($user) && password_verify($currentPassword, $user->password) && $newPassword == $confirmNewPassword) {
 
             $hash_password = password_hash($newPassword, PASSWORD_BCRYPT);
 
-            $stmtPwd = $this->db->prepare("UPDATE project.users SET password = :password WHERE email = :email");
-            $stmtPwd->bindParam("password", $hash_password, \PDO::PARAM_STR);
-            $stmtPwd->bindParam("email", $email, \PDO::PARAM_STR);
+            try {
+                $stmtPwd = $this->db->prepare("UPDATE project.users SET password = :password WHERE email = :email");
+                $stmtPwd->bindParam("password", $hash_password, \PDO::PARAM_STR);
+                $stmtPwd->bindParam("email", $this->email, \PDO::PARAM_STR);
 
-            $result = $stmtPwd->execute();
+                $result = $stmtPwd->execute();
+
+                $emailSuccess = $this->mail->send('emails/passwordchanged.twig', ['' => ''],
+                    function ($message) {
+                        $message->to($this->email);
+                        $message->subject('Password changed');
+                    });
+            } catch
+            (\PDOException $e) {
+                return ($e->getMessage());
+            }
 
             if ($result) {
-                //die('done');
-                return true; //changed successfully
+                if (is_bool($emailSuccess) && ($emailSuccess)) {
+                    return true;
+                } else {
+                    return $emailSuccess;
+                }
             }
         } else {
             return false;
-            //die('na');
         }
-
     }
 
 }
