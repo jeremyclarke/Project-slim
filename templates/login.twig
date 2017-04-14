@@ -34,22 +34,16 @@
                         Login
                     </button>
 
-                    {#<button type="button" class="btn btn-default pull-right" data-dismiss="modal"></span>#}
-                    {#Close#}
-                    {#</button>#}
-
                 </form>
             </div>
             <div class="modal-footer">
-                {#<span class="pull-left" data-toggle="modal" data-target="#registerModal" data-dismiss="modal">Not registered? <a href="#">Sign up</a></span>#}
-                <button type="button" class="btn btn-default pull-left" data-toggle="modal" data-target="#registerModal"
+                <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#registerModal"
                         data-dismiss="modal"></span>Register
                 </button>
 
-                <button type="button" class="btn btn-default pull-right" data-toggle="modal"
-                        data-target="#forgotPasswordModal" data-dismiss="modal"></span>Forgot password
+                <button type="button" class="btn btn-default pull-left" data-toggle="modal"
+                        data-target="#forgotPasswordModal" data-dismiss="modal"></span>Forgot password?
                 </button>
-                {#<span class="pull-right"><a href="#">Forgot password?</a></span>#}
             </div>
         </div>
     </div>
@@ -89,7 +83,7 @@
                         title: data.msgTitle,
                         text: data.msgBody,
                         type: "success",
-                        //timer: 0,
+                        timer: 0,
                         showConfirmButton: false
                     },
                     function () {

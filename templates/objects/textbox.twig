@@ -1,7 +1,7 @@
-{% if objects.required == '1' %}
+{% if object.required == '1' %}
     {% set required = 'required' %}
 {% else %}
     {% set required = '' %}
 {% endif %}
 
-<input class="form-control" type="text" name="textbox_{{ objects.ID }}" id="textbox_{{ objects.ID }}" {{ required }}>
+<input class="form-control" type="text" name="textbox_{{ object.ID }}" id="textbox_{{ object.ID }}" {{ required }}>

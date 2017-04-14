@@ -1,19 +1,20 @@
-{% if objects.required == '1' %}
+{% if object.required == '1' %}
     {% set required = 'required' %}
 {% else %}
     {% set required = '' %}
 {% endif %}
 
-<input type="hidden" name="radio_{{ objects.ID }}" value="">
+{#<input type="hidden" name="radio_{{ object.ID }}" value="">#}
+<fieldset id="radio_{{ object.ID }}">
 
-{% for option in objectSQL[objects.ID] %}
+{% for option in objectSQL[object.ID] %}
 
     {% if option[1] is empty %}
-        <input type="radio" name="radio_{{ objects.ID }}" value="{{ option[0]|raw }}" {{ required }}> {{ option[0]|raw }}<br>
+        <input type="radio" name="radio_{{ object.ID }}" value="{{ option[0]|raw }}" {{ required }}> {{ option[0]|raw }}<br>
     {% else %}
-        <input type="radio" name="radio_{{ objects.ID }}" value="{{ option[0]|raw }}" {{ required }}> {{ option[1]|raw }}<br>
+        <input type="radio" name="radio_{{ object.ID }}" value="{{ option[0]|raw }}" {{ required }}> {{ option[1]|raw }}<br>
     {% endif %}
 
 {% endfor %}
 
-
+</fieldset>

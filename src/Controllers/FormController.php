@@ -9,9 +9,29 @@ class FormController extends Controller
         parent::__construct($db, $twig, $mail, $rlib);
     }
 
-    function returnUsersPrivateFormDetails($userID)
+
+    function getForms()
     {
-        $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms 
+        $sql = 'SELECT * FROM project.forms';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $results = $stmt->fetchAll(\PDO::FETCH_OBJ);
+    }
+
+    function getSingleForm($formID)
+    {
+        $sql = 'SELECT * FROM project.forms WHERE ID = :ID';
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam("ID", $formID, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $results = $stmt->fetch(\PDO::FETCH_OBJ);
+    }
+
+    function getPrivateForms($userID)
+    {
+        $sql = 'SELECT * FROM project.forms 
                 WHERE private = 1 
                 AND ID IN (SELECT form_id from project.permissions where user_id = :userID)';
 
@@ -19,10 +39,10 @@ class FormController extends Controller
         $stmt->bindParam("userID", $userID, \PDO::PARAM_INT);
         $stmt->execute();
 
-        $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
-
-        return $results;
+        return $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
     }
+
+
 
 //    function returnPublicFormDetails()
 //    {
@@ -35,18 +55,6 @@ class FormController extends Controller
 //
 //        return $results;
 //    }
-
-    function returnAllFormDetails()
-    {
-        $sql = 'SELECT ID, ID, name, title, description, developer_mode, private FROM project.forms';
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-
-        $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
-
-        return $results;
-    }
 
 
 //    function checkIfFormPublic($formID)
@@ -83,22 +91,17 @@ class FormController extends Controller
 //        return $results;
 //    }
 
-    function submitForm($params, $formID, $response)
+    function submitForm($params, $sqlStmt)
     {
-        $sql = "SELECT SQL_insert_execute_query FROM project.objects WHERE form_id = :formID AND type = 'button' LIMIT 1";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':formID', $formID, \PDO::PARAM_INT);
-        $stmt->execute();
+        $action = explode(' ',trim($sqlStmt))[0];
 
-        $actionSQL = $stmt->fetchColumn();
-
-        if (substr(strtoupper($actionSQL), 0, 4) === 'INSE') {
+        if (strtolower($action) == 'insert') {
             for ($i = 0; $i < sizeof($params); $i++) {
-                $actionSQL = str_replace("@@" . array_keys($params)[$i], "?", $actionSQL);
+                $sqlStmt = str_replace("@@" . array_keys($params)[$i], "?", $sqlStmt);
             }
 
             try {
-                $stmt = $this->db->prepare($actionSQL);
+                $stmt = $this->db->prepare($sqlStmt);
 
                 for ($i = 0; $i < sizeof($params); $i++) {
                     $stmt->bindParam($i + 1, array_values($params)[$i], \PDO::PARAM_STR, 1);
@@ -106,8 +109,16 @@ class FormController extends Controller
 
                 $stmt->execute();
 
+                return array('success' => true,
+                    'msgTitle' => 'Form submitted',
+                    'msgBody' => 'Thanks! Your form has been submitted successfully.'
+                );
+
             } catch (\PDOException $e) {
-                return $e->getMessage();
+                return array('success' => false,
+                    'msgTitle' => 'SQL problem',
+                    'msgBody' => $e->getMessage()
+                );
             }
 
         } else {

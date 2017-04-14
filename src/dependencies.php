@@ -43,10 +43,9 @@ $container['twig'] = function ($c) {
     $basePath = rtrim(str_ireplace('index.php', '', $c['request']->getUri()->getBasePath()), '/');
     $twig->addExtension(new Slim\Views\TwigExtension($c['router'], $basePath));
 
-    $twig->getEnvironment()->addGlobal(
-        'rootURL',
-        empty($_SERVER['HTTPS']) ? 'http://' . $_SERVER['SERVER_NAME'] : 'https://' . $_SERVER['SERVER_NAME']
-    );
+    $twig->getEnvironment()->addGlobal('rootURL', empty($_SERVER['HTTPS']) ? 'http://' . $_SERVER['SERVER_NAME'] : 'https://' . $_SERVER['SERVER_NAME']);
+    $twig->getEnvironment()->addGlobal('user', $_SESSION['user']);
+
     return $twig;
 };
 

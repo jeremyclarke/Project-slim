@@ -2,9 +2,9 @@
 
 namespace App\Controllers\Mail;
 
-ini_set('display_startup_errors', 1);
-ini_set('display_errors', 1);
-error_reporting(-1);
+//ini_set('display_startup_errors', 1);
+//ini_set('display_errors', 1);
+//error_reporting(-1);
 
 class MailController// extends Controller
     // todo: Sweet alert response does not work if email debugging switched on

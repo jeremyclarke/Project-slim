@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="page-header">
-        {% if user is defined %}
+        {% if user %}
             <h1>Welcome, {{ user.first_name }}.</h1>
         {% else %}
             <h1>Welcome, guest user.</h1>
@@ -21,14 +21,14 @@
     </div>
 
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <div class="panel panel-info">
+        <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title">Public forms</h3>
+                <h3 class="panel-title">Select a form...</h3>
             </div>
             <div class="panel-body">
                 <ul class="list-group">
 
-                    {% for form in formsAll %}
+                    {% for form in forms %}
                         {% if form.private == 0 %}
                             <a href="{{ path_for('form', { 'id' : form.ID } ) }}"
                                class="list-group-item">{{ form.title }}</a>
@@ -46,20 +46,20 @@
                 <h3 class="panel-title">My Private forms</h3>
             </div>
             <div class="panel-body">
-                {% if user is defined %}
+                {% if user %}
                     <ul class="list-group">
-                        {% if formsAllPrivate is empty %}
+                        {% if formsPrivate is empty %}
                             <span>There are currently no private forms assigned to you.</span>
                         {% else %}
-                            {% for form in formsAllPrivate %}
-                                <a href="{{ path_for('form', { 'id' : form.ID } ) }}"
-                                   class="list-group-item">{{ form.title }}</a>
+                            {% for form in formsPrivate %}
+                                <a href="{{ path_for('form', { 'id' : form.ID } ) }}" class="list-group-item">    <span
+                                            class="badge"><span
+                                                class="glyphicon glyphicon-lock"></span></span> {{ form.title }}</a>
                             {% endfor %}
                         {% endif %}
                     </ul>
                 {% else %}
-                    <span>Please <a href="#" data-toggle="modal"
-                                    data-target="#myModal">login</a> to access private forms.</span>
+                    <span>Please <a href="#" data-toggle="modal" data-target="#loginModal">login</a> to access private forms.</span>
                 {% endif %}
             </div>
         </div>

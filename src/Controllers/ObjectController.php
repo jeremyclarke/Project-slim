@@ -11,20 +11,20 @@ class ObjectController extends Controller
         parent::__construct($db, $twig, $mail, $rlib);
     }
 
-    function returnAllFormObjects($formID)
+    function getFormObjects($formID)
     {
         $sql = 'SELECT ID, ID, form_ID, type, SQL_populate_query, SQL_insert_execute_query, caption, required FROM project.objects WHERE form_ID = :formID ORDER BY -obj_order DESC';
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':formID', $formID, \PDO::PARAM_INT);
         $stmt->execute();
-        $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE);
+        $objects = $stmt->fetchAll(\PDO::FETCH_OBJ);
 
-        foreach ($results as $result) {
-            if (!empty($result['SQL_populate_query'])) {
-                $this->getFormObjectSQLResult($result['SQL_populate_query'], $result['ID']);
+        foreach ($objects as $object) {
+            if (!empty($object->SQL_populate_query)) {
+                $this->getFormObjectSQLResult($object->SQL_populate_query, $object->ID);
             }
         }
-        return $results;
+        return $objects;
     }
 
     function getFormObjectSQLResult($sql, $id)

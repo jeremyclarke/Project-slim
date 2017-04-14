@@ -13,18 +13,18 @@
         <link rel="stylesheet" type="text/css" href="/css/sweetalert.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 
-        <style>
-            .modal-header, h4, .close {
-                background-color: #5cb85c;
-                color: white !important;
-                text-align: center;
-                font-size: 30px;
-            }
+        {#<style>#}
+            {#.modal-header, h4, .close {#}
+                {#background-color: #5cb85c;#}
+                {#color: white !important;#}
+                {#text-align: center;#}
+                {#font-size: 30px;#}
+            {#}#}
 
-            .modal-footer {
-                background-color: #f9f9f9;
-            }
-        </style>
+            {#.modal-footer {#}
+                {#background-color: #f9f9f9;#}
+            {#}#}
+        {#</style>#}
 
 
         <title>
@@ -50,9 +50,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                {% if user is not defined %}
-                <li><a href="#" data-toggle="modal" data-target="#loginModal">Login/Register</a></li>
-                {% else %}
+                {% if user %}
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">{{ user.first_name }} {{ user.last_name }} <span
@@ -67,7 +65,11 @@
 
                     </ul>
             </ul>
+
+            {% else %}
+                <li><a href="#" data-toggle="modal" data-target="#loginModal">Login/Register</a></li>
             {% endif %}
+
             </ul>
         </div><!--/.nav-collapse -->
     </div>
@@ -80,14 +82,19 @@
 <div class="footer">
     {% block footer %}
         <div class="container">
+
+            {% if user %}
+                <p class="text-muted pull-left">
+                    Logged in as {{ user.first_name }} {{ user.last_name }}
+                </p>
+            {% endif %}
+
             <p class="text-muted pull-right">
                 &#169; {{ "now"|date("Y") }} Jeremy Clarke
             </p>
         </div>
     {% endblock %}
 </div>
-
-
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>

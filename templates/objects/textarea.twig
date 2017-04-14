@@ -1,8 +1,8 @@
-{% if objects.required == '1' %}
+{% if object.required == '1' %}
     {% set required = 'required' %}
 {% else %}
     {% set required = '' %}
 {% endif %}
 
-<textarea class="form-control" rows="4" cols="50" name="textarea_{{ objects.ID }}" id="textarea_{{ objects.ID }}" {{ required }}>
+<textarea class="form-control" rows="4" cols="50" name="textarea_{{ object.ID }}" id="textarea_{{ object.ID }}" {{ required }}>
 </textarea>
