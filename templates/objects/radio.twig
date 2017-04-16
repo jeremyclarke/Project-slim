@@ -11,9 +11,13 @@
 {% endif %}
 
 <div class="form-group">
-
+{#todo: fix..#}
     {% if object.required == '0' %}
         <input type="hidden" name="radio_{{ object.ID }}" value="" {{ required }}>
+    {% endif %}
+
+    {% if form.developer_mode %}
+        <code class="pull-right"> @@{{ object.type }}_{{ object.ID }}</code>
     {% endif %}
 
     {% for option in objectSQL[object.ID] %}

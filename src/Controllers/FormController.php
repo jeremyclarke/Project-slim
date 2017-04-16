@@ -112,26 +112,30 @@ class FormController extends Controller
         $action = explode(' ', trim($sqlStmt))[0];
         $totalParams = substr_count($sqlStmt, "@@");
 
-        if (strtolower($action) == 'insert') {
+        if (strtolower($action) == 'insert' || 'update' || 'call') {
 
             for ($i = 0; $i < sizeof($params); $i++) {
-                $sqlStmt = str_replace("@@" . array_keys($params)[$i], "?", $sqlStmt);
+                $sqlStmt = str_replace("@@" . array_keys($params)[$i], ":" . array_keys($params)[$i], $sqlStmt);
             }
 
             try {
                 $stmt = $this->db->prepare($sqlStmt);
 
                 for ($i = 0; $i < $totalParams; $i++) { //ITS HERE FAM
-//                    echo array_values($params)[$i];
 
                     if (empty(array_values($params)[$i])) {
                         $null = NULL;
-                        $stmt->bindParam($i + 1, $null, \PDO::PARAM_STR);
+//                        $stmt->bindParam($i + 1, $null, \PDO::PARAM_STR);
+                        $stmt->bindParam(":" . array_keys($params)[$i], $null, \PDO::PARAM_STR);
+
                     } else {
-                        $stmt->bindParam($i + 1, array_values($params)[$i], \PDO::PARAM_STR);
+//                        $stmt->bindParam($i + 1, array_values($params)[$i], \PDO::PARAM_STR);
+                        $stmt->bindParam(":" . array_keys($params)[$i], array_values($params)[$i], \PDO::PARAM_STR);
+
                     }
                 }
                 if ($stmt->execute()) {
+
                     return array(
                         'success' => true,
                         'msgTitle' => 'Form submitted',

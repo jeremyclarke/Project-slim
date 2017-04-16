@@ -72,7 +72,7 @@ class UserController extends Controller
     function register($params)
     {
         $this->email = trim($params['email']);
-        $this->password = trim($params['password']);
+        $this->password = trim($params['inputPassword']);
         $this->firstName = trim($params['firstName']);
         $this->lastName = trim($params['lastName']);
 
@@ -82,8 +82,7 @@ class UserController extends Controller
             $stmt->execute();
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-            if ($row['num'] > 0) {
-                //user already exists
+            if ($row['num'] > 0) {//user already exists
                 return array(
                     'success' => false,
                     'msgTitle' => 'Account already exists.',
@@ -92,7 +91,8 @@ class UserController extends Controller
             } else {
 
                 if (strlen($this->password) <= 7) {
-                    return array('success' => false,
+                    return array(
+                        'success' => false,
                         'msgTitle' => 'Check password',
                         'msgBody' => 'Please check your password length meets the required password complexity.'
                     );
@@ -138,6 +138,12 @@ class UserController extends Controller
                         'msgTitle' => 'Registration successful!',
                         'msgBody' => 'Thanks! Your account has been registered successfully. You can now login from the home page.'
                     );
+                } else {
+                    return array( //registered successfully
+                        'success' => false,
+                        'msgTitle' => 'O shit',
+                        'msgBody' => 'Something pretty bad went wrong ngl'
+                    );
                 }
             }
 
@@ -147,7 +153,14 @@ class UserController extends Controller
                 'msgTitle' => 'Error',
                 'msgBody' => $e->getMessage()
             );
+        } catch (\phpmailerException $e) {
+            return array( //PHPMailler error
+                'success' => false,
+                'msgTitle' => 'Error',
+                'msgBody' => $e->errorMessage()
+            );
         }
+
     }
 
     function verifyUser($formID)

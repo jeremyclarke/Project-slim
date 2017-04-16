@@ -37,22 +37,11 @@ $app->get('/form/{id}', function ($request, $response, $args) {
 })->setName('form');
 
 
-
-
-
 $app->post('/submit/{ID}', function ($request, $response, $args) {
     $checkSubmit = $this->FormController->submitForm($request->getParams(), $args['ID']);
 
     return $response->withJson($checkSubmit);
 })->setName('formInsert');
-
-
-
-
-
-
-
-
 
 
 // ** LOGIN **
@@ -78,8 +67,12 @@ $app->post('/register', function ($request, $response, $args) {
 
 
 $app->get('/admin', function ($request, $response, $args) {
-    echo 'admin panel here';
-})->setName('admin');
+    return $this->twig->render($response, 'admin.twig',
+        [
+            'forms' => $this->FormController->getForms(),
+            'formsPrivate' => $this->FormController->getPrivateForms($_SESSION['user']->id) //private forms
+        ]
+    );})->setName('admin');
 
 
 // ** FORGOT PASSWORD **

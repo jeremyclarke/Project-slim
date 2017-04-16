@@ -12,6 +12,10 @@
         <label for="{{ object.type }}_{{ object.ID }}">{{ object.caption }}</label>
     {% endif %}
 
+    {% if form.developer_mode %}
+        <code class="pull-right"> @@{{ object.type }}_{{ object.ID }}</code>
+    {% endif %}
+
     <input
             class="form-control"
             type="text"
@@ -20,7 +24,9 @@
             maxlength="{{ object.input_length_max }}"
             data-minlength="{{ object.input_length_min }}"
             data-minlength-error="{{ object.input_length_min_error }}"
-            pattern="{{ object.regex }}"
+            {% if object.regex %}
+                pattern="{{ object.regex }}"
+            {% endif %}
             data-pattern-error="{{ object.regex_error }}"
             data-required-error="{{ object.required_error }}"
             {{ required }}

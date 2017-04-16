@@ -1,3 +1,8 @@
 {#<div class="well well-sm">{{ object.caption|raw }}</div>#}
 <h4>{{ object.caption|raw }}</h4>
 
+{#{% if form.developer_mode %}#}
+    {#<code class="pull-right"> @@{{ object.type }}_{{ object.ID }}</code>#}
+    {#<br>#}
+{#{% endif %}#}
+

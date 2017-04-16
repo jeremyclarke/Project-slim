@@ -1,0 +1,29 @@
+{% extends "base.twig" %}
+
+{% block title %}
+    Admin
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        {% if user %}
+            <h1>Admin, {{ user.first_name }}.</h1>
+        {% else %}
+            <h1>Admin, guest user.</h1>
+        {% endif %}
+    </div>
+
+    <div class="well">
+        <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque elit enim, bibendum at sem eu, tincidunt laoreet nisi.
+            Phasellus dictum, nisi id aliquet scelerisque, dui metus viverra nunc, ut placerat nulla lorem quis quam. Duis non lacus neque. Proin in iaculis eros.
+            Vestibulum ornare viverra nulla, tristique malesuada mauris euismod et.
+        </span>
+    </div>
+
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+
+
+    </div>
+
+{% endblock %}

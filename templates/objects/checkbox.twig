@@ -12,6 +12,11 @@
                     {{ required }}>
             {{ object.caption }}
         </label>
+
+        {% if form.developer_mode %}
+            <code class="pull-right"> @@{{ object.type }}_{{ object.ID }}</code>
+        {% endif %}
+
         <div class="help-block with-errors"></div>
     </div>
 </div>

@@ -21,25 +21,9 @@
             <ul>
                 {% for object in objects %}
 
-                    {#{% if object.type != 'label' %}#}
-
-                        {#{% if object.required == '1' %}#}
-                            {#<label for="{{ object.type }}_{{ object.ID }}">{{ object.caption }} <span#}
-                                        {#style="color:red;">*</span></label>#}
-                        {#{% else %}#}
-                            {#<label for="{{ object.type }}_{{ object.ID }}">{{ object.caption }}</label>#}
-                        {#{% endif %}#}
-
-                    {#{% endif %}#}
-
                     {% include "objects/#{object.type}.twig" %}
-
-                    {% if form.developer_mode == '1' %}
-                        <code>@@{{ object.type }}_{{ object.ID }}</code>
-                        <br>
-                    {% endif %}
-
                     </br>
+
                 {% endfor %}
 
                 <div class="form-group">
@@ -56,19 +40,15 @@
 {% block js %}
     <script>
 
-        //                $('#pageForm').validator().on('submit', function (e) {
         $('#pageForm').validator().submit(function (e) {
             if (e.isDefaultPrevented()) {
-                console.log('validtion error');
+                console.log('Validation error');
             } else {
-
-//                $("#pageForm").submit(function (event) {
-
 
                 // Stop form from submitting normally
                 e.preventDefault();
 
-//                        $('#submitButton').prop('disabled', true).text("Working...");
+//               $('#submitButton').prop('disabled', true).text("Working...");
 
                 // Send the data using post
                 var posting = $.post("{{ path_for('formInsert', {'ID': form.ID}) }}", $("#pageForm").serialize());
@@ -98,69 +78,6 @@
                 });
             }
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        {#// Attach a submit handler to the form#}
-        {#$("#pageForm").submit(function (event) {#}
-
-                {#// Stop form from submitting normally#}
-                {#event.preventDefault();#}
-
-{#//                $('#submitButton').prop('disabled', true).text("Working...");#}
-
-                {#// Send the data using post#}
-                {#var posting = $.post("{{ path_for('formInsert', {'sql': form.submit_statement|url_encode}) }}", $(this).serialize());#}
-
-                {#// Show the results#}
-                {#posting.always(function (data) {#}
-                    {#console.log(data);#}
-
-                    {#if (!data.success) {#}
-                        {#$('#submitButton').prop('disabled', false);#}
-                        {#swal({#}
-                            {#title: data.msgTitle,#}
-                            {#text: data.msgBody,#}
-                            {#type: "warning",#}
-                            {#showConfirmButton: true#}
-                        {#});#}
-                    {#} else {#}
-                        {#swal({#}
-                                {#title: data.msgTitle,#}
-                                {#text: data.msgBody,#}
-                                {#type: "success",#}
-                                {#showConfirmButton: true#}
-                            {#},#}
-                            {#function () {#}
-                                {#location.reload();#}
-                            {#});#}
-                    {#}#}
-                {#});#}
-            {#}#}
-        {#);#}
 
     </script>
 

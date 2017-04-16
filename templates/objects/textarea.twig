@@ -12,6 +12,11 @@
         <label for="{{ object.type }}_{{ object.ID }}">{{ object.caption }}</label>
     {% endif %}
 
+    {% if form.developer_mode %}
+        <code class="pull-right"> @@{{ object.type }}_{{ object.ID }}</code>
+    {% endif %}
+
+
     <textarea class="form-control"
               rows="4"
               cols="50"
@@ -20,8 +25,8 @@
               maxlength="{{ object.input_length_max }}"
               data-minlength="{{ object.input_length_min }}"
               data-minlength-error="{{ object.input_length_min_error }}"
-              pattern="{{ object.regex }}"
-              data-pattern-error="{{ object.regex_error }}"
+              {#pattern="{{ object.regex }}"#}
+              {#data-pattern-error="{{ object.regex_error }}"#}
               data-required-error="{{ object.required_error }}"
             {{ required }}>
 </textarea>

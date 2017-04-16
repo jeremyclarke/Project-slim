@@ -10,10 +10,12 @@
 
             <div class="modal-body" style="padding:20px 50px 20px 50px;">
 
-                <div class="well well-sm">
-                    <span>Please enter your current password, and confirm your new password. Passwords should be at least 8
-                        characters long, including at least 1 number.</span>
-                </div>
+                {#<div class="well well-sm">#}
+                {#<blockquote>#}
+                <h4>Please enter the details below. Note, passwords should be at least 8
+                    characters long, including at least 1 number.</h4>
+                {#</blockquote>#}
+                {#</div>#}
 
                 <form role="form" method="post" id="registerForm" data-toggle="validator">
                     <div class="form-group">
@@ -38,22 +40,23 @@
 
                     </div>
                     <div class="form-group">
-                        <label for="password">Password</label>
+                        <label for="inputPassword" class="control-label">Password</label>
                         <div class="form-inline row">
-                            <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                <input type="password" class="form-control" id="password" name="password"
-                                       placeholder="Enter password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
-                                       data-pattern-error="Password should be 8 characters long, including at least one number."
-                                       required>
+                            <div class="form-group col-sm-6">
+                                <input type="password" data-minlength="8" class="form-control" id="inputPassword" name="inputPassword"
+                                       pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
+                                       data-pattern-error="Password not strong enough" placeholder="Password" required>
                                 <div class="help-block with-errors"></div>
                             </div>
-                            <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                <input type="password" class="form-control" id="passwordConfirm"
-                                       data-match="#password" placeholder="Confirm password" required>
+                            <div class="form-group col-sm-6">
+                                <input type="password" class="form-control" id="inputPasswordConfirm"
+                                       data-match="#inputPassword" data-match-error="Passwords don't match"
+                                       placeholder="Confirm password" required>
                                 <div class="help-block with-errors"></div>
                             </div>
                         </div>
                     </div>
+
 
                     <button type="submit" id="registerSubmit" class="btn btn-success btn-block">Register</button>
 
@@ -73,40 +76,45 @@
 
 <script> // REGISTER FORM SUBMISSION
     // Attach a submit handler to the form
-    $("#registerForm").submit(function (event) {
+    //    $("#registerForm").submit(function (event) {
+    $('#registerForm').validator().submit(function (event) {
+        if (event.isDefaultPrevented()) {
+            console.log('Validation error');
+        } else {
 
-        // Stop form from submitting normally
-        event.preventDefault();
+            // Stop form from submitting normally
+            event.preventDefault();
 
-        $('#registerSubmit').prop('disabled', true).text("Working...");
+            $('#registerSubmit').prop('disabled', true).text("Working...");
 
-        // Send the data using post
-        var posting = $.post("{{ path_for('register') }}", $("#registerForm").serialize());
+            // Send the data using post
+            var posting = $.post("{{ path_for('register') }}", $("#registerForm").serialize());
 
-        // Show the results
-        posting.done(function (data) {
-            console.log(data);
+            // Show the results
+            posting.done(function (data) {
+                console.log(data);
 
-            if (!data.success) {
-                $('#registerSubmit').prop('disabled', false).text("Login");
-                swal({
-                    title: data.msgTitle,
-                    text: data.msgBody,
-                    type: "warning",
-                    showConfirmButton: true
-                });
-            }
-            else {
-                swal({
+                if (!data.success) {
+                    $('#registerSubmit').prop('disabled', false).text("Register");
+                    swal({
                         title: data.msgTitle,
                         text: data.msgBody,
-                        type: "success",
+                        type: "warning",
                         showConfirmButton: true
-                    },
-                    function () {
-                        location.reload();
                     });
-            }
-        });
+                }
+                else {
+                    swal({
+                            title: data.msgTitle,
+                            text: data.msgBody,
+                            type: "success",
+                            showConfirmButton: true
+                        },
+                        function () {
+                            location.reload();
+                        });
+                }
+            });
+        }
     });
 </script>
