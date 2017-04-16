@@ -4,5 +4,27 @@
     {% set required = '' %}
 {% endif %}
 
-<textarea class="form-control" rows="4" cols="50" name="textarea_{{ object.ID }}" id="textarea_{{ object.ID }}" {{ required }}>
+<div class="form-group">
+
+    {% if object.required == '1' %}
+        <label for="{{ object.type }}_{{ object.ID }}">{{ object.caption }} <span style="color:red;">*</span></label>
+    {% else %}
+        <label for="{{ object.type }}_{{ object.ID }}">{{ object.caption }}</label>
+    {% endif %}
+
+    <textarea class="form-control"
+              rows="4"
+              cols="50"
+              name="textarea_{{ object.ID }}"
+              id="textarea_{{ object.ID }}"
+              maxlength="{{ object.input_length_max }}"
+              data-minlength="{{ object.input_length_min }}"
+              data-minlength-error="{{ object.input_length_min_error }}"
+              pattern="{{ object.regex }}"
+              data-pattern-error="{{ object.regex_error }}"
+              data-required-error="{{ object.required_error }}"
+            {{ required }}>
 </textarea>
+    <div class="help-block with-errors"></div>
+
+</div>

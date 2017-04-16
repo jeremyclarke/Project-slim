@@ -13,7 +13,8 @@ class ObjectController extends Controller
 
     function getFormObjects($formID)
     {
-        $sql = 'SELECT ID, ID, form_ID, type, SQL_populate_query, SQL_insert_execute_query, caption, required FROM project.objects WHERE form_ID = :formID ORDER BY -obj_order DESC';
+//        $sql = 'SELECT ID, ID, form_ID, type, SQL_populate_query, caption, required, input_length, regex, validation_error FROM project.objects WHERE form_ID = :formID ORDER BY -obj_order DESC';
+        $sql = 'SELECT * FROM project.objects WHERE form_ID = :formID ORDER BY -obj_order DESC';
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':formID', $formID, \PDO::PARAM_INT);
         $stmt->execute();

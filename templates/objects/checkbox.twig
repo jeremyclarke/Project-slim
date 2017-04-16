@@ -1,1 +1,17 @@
-<input type="checkbox" name="checkbox_{{ object.ID }}" value="">
+{% if object.required == '1' %}
+    {% set required = 'required' %}
+{% else %}
+    {% set required = '' %}
+{% endif %}
+
+<div class="form-group">
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" name="checkbox_{{ object.ID }}" value="true"
+                   data-required-error="{{ object.required_error }}"
+                    {{ required }}>
+            {{ object.caption }}
+        </label>
+        <div class="help-block with-errors"></div>
+    </div>
+</div>

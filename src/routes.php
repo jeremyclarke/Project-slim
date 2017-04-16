@@ -40,8 +40,9 @@ $app->get('/form/{id}', function ($request, $response, $args) {
 
 
 
-$app->post('/submit/{sql}', function ($request, $response, $args) {
-    $checkSubmit = $this->FormController->submitForm($request->getParams(), $args['sql']);
+$app->post('/submit/{ID}', function ($request, $response, $args) {
+    $checkSubmit = $this->FormController->submitForm($request->getParams(), $args['ID']);
+
     return $response->withJson($checkSubmit);
 })->setName('formInsert');
 

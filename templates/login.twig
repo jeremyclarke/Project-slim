@@ -9,16 +9,19 @@
             </div>
 
             <div class="modal-body" style="padding:40px 50px 60px 50px;">
-                <form role="form" method="post" id="loginForm">
+                <form role="form" method="post" id="loginForm" data-toggle="validator">
                     <div class="form-group">
-                        <label for="username">Email</label>
+                        <label for="email">Email</label>
                         <input type="email" class="form-control" name="email" id="email" placeholder="Enter email"
-                               required autofocus>
+                               required>
+                        <div class="help-block with-errors"></div>
+
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" class="form-control" id="password" name="password"
                                placeholder="Enter password" required>
+                        <div class="help-block with-errors"></div>
                     </div>
 
                     <div class="incorrectLogin">
@@ -51,46 +54,51 @@
 
 <script> // LOGIN FORM SUBMISSION
     // Attach a submit handler to the form
-    $("#loginForm").submit(function (event) {
+//    $("#loginForm").submit(function (event) {
+    $('#loginForm').validator().submit(function (event) {
+        if (event.isDefaultPrevented()) {
+            console.log('Validation error');
+        } else {
 
-        // Stop form from submitting normally
-        event.preventDefault();
+            // Stop form from submitting normally
+            event.preventDefault();
 
-        $('#loginSubmit').prop('disabled', true).text("Working...");
+            $('#loginSubmit').prop('disabled', true).text("Working...");
 
-        // Send the data using post
-        var posting = $.post("{{ path_for('login') }}", $('#loginForm').serialize());
+            // Send the data using post
+            var posting = $.post("{{ path_for('login') }}", $('#loginForm').serialize());
 
-        // Show the results
-        posting.done(function (data) {
-            console.log(data);
+            // Show the results
+            posting.done(function (data) {
+                console.log(data);
 
-            if (!data.success) {
-                $(".incorrectLogin").show();
-                $(".incorrectLogin p").text(data.msgBody);
+                if (!data.success) {
+                    $(".incorrectLogin").show();
+                    $(".incorrectLogin p").text(data.msgBody);
 
-                $('#loginSubmit').prop('disabled', false).text("Login");
+                    $('#loginSubmit').prop('disabled', false).text("Login");
 
-                $("#loginModal").addClass("animated shake").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',
-                    function () {
-                        $("#loginModal").removeClass("animated shake");
-                    });
+                    $("#loginModal").addClass("animated shake").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',
+                        function () {
+                            $("#loginModal").removeClass("animated shake");
+                        });
 
 
-            } else {
-                $(".incorrectLogin").hide();
-                swal({
-                        title: data.msgTitle,
-                        text: data.msgBody,
-                        type: "success",
-                        timer: 0,
-                        showConfirmButton: false
-                    },
-                    function () {
-                        location.reload();
-                    });
-            }
-        });
+                } else {
+                    $(".incorrectLogin").hide();
+                    swal({
+                            title: data.msgTitle,
+                            text: data.msgBody,
+                            type: "success",
+                            timer: 0,
+                            showConfirmButton: false
+                        },
+                        function () {
+                            location.reload();
+                        });
+                }
+            });
+        }
     });
 </script>
 

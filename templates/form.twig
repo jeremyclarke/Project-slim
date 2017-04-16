@@ -17,20 +17,20 @@
             </blockquote>
         {% endif %}
 
-        <form class="col-lg-12 col-md-12 col-sm-12 col-xs-12" method="post" id="pageForm">
+        <form class="col-lg-12 col-md-12 col-sm-12 col-xs-12" method="post" id="pageForm" data-toggle="validator">
             <ul>
                 {% for object in objects %}
 
-                    {% if object.type != 'label' %}
+                    {#{% if object.type != 'label' %}#}
 
-                        {% if object.required == '1' %}
-                            <label for="{{ object.type }}_{{ object.ID }}">{{ object.caption }} <span
-                                        style="color:red;">*</span></label>
-                        {% else %}
-                            <label for="{{ object.type }}_{{ object.ID }}">{{ object.caption }}</label>
-                        {% endif %}
+                        {#{% if object.required == '1' %}#}
+                            {#<label for="{{ object.type }}_{{ object.ID }}">{{ object.caption }} <span#}
+                                        {#style="color:red;">*</span></label>#}
+                        {#{% else %}#}
+                            {#<label for="{{ object.type }}_{{ object.ID }}">{{ object.caption }}</label>#}
+                        {#{% endif %}#}
 
-                    {% endif %}
+                    {#{% endif %}#}
 
                     {% include "objects/#{object.type}.twig" %}
 
@@ -41,7 +41,13 @@
 
                     </br>
                 {% endfor %}
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" id="submitButton">Submit</button>
+                </div>
+
             </ul>
+
         </form>
     </div>
 
@@ -49,66 +55,114 @@
 
 {% block js %}
     <script>
-        // Attach a submit handler to the form
-        $("#pageForm").submit(function (event) {
 
-            // Stop form from submitting normally
-            event.preventDefault();
+        //                $('#pageForm').validator().on('submit', function (e) {
+        $('#pageForm').validator().submit(function (e) {
+            if (e.isDefaultPrevented()) {
+                console.log('validtion error');
+            } else {
 
-            $('#submitButton').prop('disabled', true).text("Working...");
+//                $("#pageForm").submit(function (event) {
 
-            // Send the data using post
-            var posting = $.post("{{ path_for('formInsert', {'sql': form.submit_statement|url_encode}) }}", $(this).serialize());
 
-            // Show the results
-            posting.done(function (data) {
-                console.log(data);
+                // Stop form from submitting normally
+                e.preventDefault();
 
-                if (!data.success) {
-                    $('#submitButton').prop('disabled', false);
-                    swal({
-                        title: data.msgTitle,
-                        text: data.msgBody,
-                        type: "warning",
-                        showConfirmButton: true
-                    });
-                } else {
-                    swal({
+//                        $('#submitButton').prop('disabled', true).text("Working...");
+
+                // Send the data using post
+                var posting = $.post("{{ path_for('formInsert', {'ID': form.ID}) }}", $("#pageForm").serialize());
+
+                // Show the results
+                posting.done(function (data) {
+                    console.log(data);
+
+                    if (!data.success) {
+                        swal({
                             title: data.msgTitle,
                             text: data.msgBody,
-                            type: "success",
+                            type: "warning",
                             showConfirmButton: true
-                        },
-                        function () {
-                            location.reload();
                         });
-                }
-            });
-
-
-//            posting.done(function (data) {
-//                console.log(data);
-//                if (data.msg) {
-//                    swal({
-//                            title: "Something went wrong!",
-//                            text: data.msg,
-//                            type: "error"
-//                        },
-//                        function () {
-//                            //location.reload();
-//                        });
-//                } else {
-//                    swal({
-//                            title: "Success!",
-//                            text: "Thanks! Your form has been submitted successfully.",
-//                            type: "success"
-//                        },
-//                        function () {
-//                            location.reload();
-//                        });
-//                }
-//            });
+                    } else {
+                        swal({
+                                title: data.msgTitle,
+                                text: data.msgBody,
+                                type: "success",
+                                showConfirmButton: true
+                            },
+                            function () {
+                                location.reload();
+                            });
+                    }
+                });
+            }
         });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        {#// Attach a submit handler to the form#}
+        {#$("#pageForm").submit(function (event) {#}
+
+                {#// Stop form from submitting normally#}
+                {#event.preventDefault();#}
+
+{#//                $('#submitButton').prop('disabled', true).text("Working...");#}
+
+                {#// Send the data using post#}
+                {#var posting = $.post("{{ path_for('formInsert', {'sql': form.submit_statement|url_encode}) }}", $(this).serialize());#}
+
+                {#// Show the results#}
+                {#posting.always(function (data) {#}
+                    {#console.log(data);#}
+
+                    {#if (!data.success) {#}
+                        {#$('#submitButton').prop('disabled', false);#}
+                        {#swal({#}
+                            {#title: data.msgTitle,#}
+                            {#text: data.msgBody,#}
+                            {#type: "warning",#}
+                            {#showConfirmButton: true#}
+                        {#});#}
+                    {#} else {#}
+                        {#swal({#}
+                                {#title: data.msgTitle,#}
+                                {#text: data.msgBody,#}
+                                {#type: "success",#}
+                                {#showConfirmButton: true#}
+                            {#},#}
+                            {#function () {#}
+                                {#location.reload();#}
+                            {#});#}
+                    {#}#}
+                {#});#}
+            {#}#}
+        {#);#}
+
     </script>
+
 {% endblock %}
 

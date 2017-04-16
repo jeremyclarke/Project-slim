@@ -91,11 +91,29 @@ class FormController extends Controller
 //        return $results;
 //    }
 
-    function submitForm($params, $sqlStmt)
+    function submitForm($params, $id)
     {
-        $action = explode(' ',trim($sqlStmt))[0];
+        try {
+            $sql = 'SELECT submit_statement FROM project.forms WHERE ID = :id LIMIT 1';
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam("id", $id, \PDO::PARAM_INT);
+            $stmt->execute();
+
+            $sqlStmt = $stmt->fetchColumn();
+
+        } catch (\PDOException $e) {
+            return array(
+                'success' => false,
+                'msgTitle' => 'SQL problem',
+                'msgBody' => $e->getMessage()
+            );
+        }
+
+        $action = explode(' ', trim($sqlStmt))[0];
+        $totalParams = substr_count($sqlStmt, "@@");
 
         if (strtolower($action) == 'insert') {
+
             for ($i = 0; $i < sizeof($params); $i++) {
                 $sqlStmt = str_replace("@@" . array_keys($params)[$i], "?", $sqlStmt);
             }
@@ -103,26 +121,45 @@ class FormController extends Controller
             try {
                 $stmt = $this->db->prepare($sqlStmt);
 
-                for ($i = 0; $i < sizeof($params); $i++) {
-                    $stmt->bindParam($i + 1, array_values($params)[$i], \PDO::PARAM_STR, 1);
+                for ($i = 0; $i < $totalParams; $i++) { //ITS HERE FAM
+//                    echo array_values($params)[$i];
+
+                    if (empty(array_values($params)[$i])) {
+                        $null = NULL;
+                        $stmt->bindParam($i + 1, $null, \PDO::PARAM_STR);
+                    } else {
+                        $stmt->bindParam($i + 1, array_values($params)[$i], \PDO::PARAM_STR);
+                    }
                 }
-
-                $stmt->execute();
-
-                return array('success' => true,
-                    'msgTitle' => 'Form submitted',
-                    'msgBody' => 'Thanks! Your form has been submitted successfully.'
-                );
-
-            } catch (\PDOException $e) {
-                return array('success' => false,
+                if ($stmt->execute()) {
+                    return array(
+                        'success' => true,
+                        'msgTitle' => 'Form submitted',
+                        'msgBody' => 'Thanks! Your form has been submitted successfully.'
+                    );
+                } else {
+                    return array(
+                        'success' => false,
+                        'msgTitle' => 'Form dead',
+                        'msgBody' => 'dead'
+                    );
+                }
+            } catch
+            (\PDOException $e) {
+                return array(
+                    'success' => false,
                     'msgTitle' => 'SQL problem',
                     'msgBody' => $e->getMessage()
                 );
             }
 
         } else {
-            echo 'broke';
+            return array(
+                'success' => false,
+                'msgTitle' => 'SQL action problem',
+                'msgBody' => 'Please check that your SQL action command is correct and try again.'
+            );
         }
     }
+
 }

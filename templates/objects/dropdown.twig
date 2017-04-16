@@ -4,19 +4,38 @@
     {% set required = '' %}
 {% endif %}
 
-<select class="form-control" name="dropdown_{{ object.ID }}" id="dropdown_{{ object.ID }}"{{ required }}>
 
-    <option value="">Please select</option>
+<div class="form-group">
 
-    {% for option in objectSQL[object.ID] %}
+    {% if object.required == '1' %}
+        <label for="{{ object.type }}_{{ object.ID }}">{{ object.caption }} <span
+                    style="color:red;">*</span></label>
+    {% else %}
+        <label for="{{ object.type }}_{{ object.ID }}">{{ object.caption }}</label>
+    {% endif %}
 
-        {% if option[1] is empty %}
-            <option value="{{ option[0]|raw }}">{{ option[0]|raw }}</option>
-        {% else %}
-            <option value="{{ option[0]|raw }}">{{ option[1]|raw }}</option>
-        {% endif %}
+    <select
+            class="form-control"
+            name="dropdown_{{ object.ID }}"
+            id="dropdown_{{ object.ID }}"
+            data-required-error="{{ object.required_error }}"
+            {{ required }}
+    >
 
-    {% endfor %}
+        <option value="">Please select</option>
 
-</select>
+        {% for option in objectSQL[object.ID] %}
 
+            {% if option[1] is empty %}
+                <option value="{{ option[0]|raw }}">{{ option[0]|raw }}</option>
+            {% else %}
+                <option value="{{ option[0]|raw }}">{{ option[1]|raw }}</option>
+            {% endif %}
+
+        {% endfor %}
+
+    </select>
+
+    <div class="help-block with-errors"></div>
+
+</div>

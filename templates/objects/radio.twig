@@ -4,17 +4,30 @@
     {% set required = '' %}
 {% endif %}
 
-{#<input type="hidden" name="radio_{{ object.ID }}" value="">#}
-<fieldset id="radio_{{ object.ID }}">
+{% if object.required == '1' %}
+    <label for="{{ object.type }}_{{ object.ID }}">{{ object.caption }} <span style="color:red;">*</span></label>
+{% else %}
+    <label for="{{ object.type }}_{{ object.ID }}">{{ object.caption }}</label>
+{% endif %}
 
-{% for option in objectSQL[object.ID] %}
+<div class="form-group">
 
-    {% if option[1] is empty %}
-        <input type="radio" name="radio_{{ object.ID }}" value="{{ option[0]|raw }}" {{ required }}> {{ option[0]|raw }}<br>
-    {% else %}
-        <input type="radio" name="radio_{{ object.ID }}" value="{{ option[0]|raw }}" {{ required }}> {{ option[1]|raw }}<br>
+    {% if object.required == '0' %}
+        <input type="hidden" name="radio_{{ object.ID }}" value="" {{ required }}>
     {% endif %}
 
-{% endfor %}
+    {% for option in objectSQL[object.ID] %}
+        <div class="radio">
+            <label>
+                {% if option[1] is empty %}
+                    <input type="radio" name="radio_{{ object.ID }}"
+                           value="{{ option[0]|raw }}" {{ required }}> {{ option[0]|raw }}<br>
+                {% else %}
+                    <input type="radio" name="radio_{{ object.ID }}"
+                           value="{{ option[0]|raw }}" {{ required }}> {{ option[1]|raw }}<br>
+                {% endif %}
+            </label>
+        </div>
+    {% endfor %}
 
-</fieldset>
+</div>
