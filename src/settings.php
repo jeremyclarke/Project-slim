@@ -25,23 +25,23 @@ return [
         ],
 
         // PHPMailer //todo: check what happens when mail server is broken
-//        'mail' => [
-//            'host' => 'smtp.zoho.com',
-//            'SMTPAuth' => true,
-//            'user' => 'no-reply@jeremyclarke.co.uk',
-//            'pass' => '54^9P@2tyg60',
-//            'SMTPSecure' => 'tls',
-//            'port' => 587,
-//        ]
-
         'mail' => [
-            'host' => 'smtp.gmail.com',
+            'host' => 'smtp.zoho.com',
             'SMTPAuth' => true,
-            'user' => 'jeremyclarke100@gmail.com',
-            'pass' => 'bUf8e49h4b',
+            'user' => 'no-reply@jeremyclarke.co.uk',
+            'pass' => '54^9P@2tyg60',
             'SMTPSecure' => 'tls',
             'port' => 587,
         ]
+
+//        'mail' => [
+//            'host' => 'smtp.gmail.com',
+//            'SMTPAuth' => true,
+//            'user' => 'jeremyclarke100@gmail.com',
+//            'pass' => 'bUf8e49h4b',
+//            'SMTPSecure' => 'tls',
+//            'port' => 587,
+//        ]
 
     ],
 ];

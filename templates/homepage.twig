@@ -52,9 +52,7 @@
                             <span>There are currently no private forms assigned to you.</span>
                         {% else %}
                             {% for form in formsPrivate %}
-                                <a href="{{ path_for('form', { 'id' : form.ID } ) }}" class="list-group-item">    <span
-                                            class="badge"><span
-                                                class="glyphicon glyphicon-lock"></span></span> {{ form.title }}</a>
+                                <a href="{{ path_for('form', { 'id' : form.ID } ) }}" class="list-group-item"><span class="badge"><span class="glyphicon glyphicon-lock"></span></span> {{ form.title }}</a>
                             {% endfor %}
                         {% endif %}
                     </ul>

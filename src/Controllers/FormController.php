@@ -33,13 +33,19 @@ class FormController extends Controller
     {
         $sql = 'SELECT * FROM project.forms 
                 WHERE private = 1 
-                AND ID IN (SELECT form_id from project.permissions where user_id = :userID)';
+                AND ID = (SELECT form_id from project.permissions where user_id = :userID LIMIT 1)';
 
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam("userID", $userID, \PDO::PARAM_INT);
         $stmt->execute();
 
-        return $results = $stmt->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
+        $results = $stmt->fetchAll(\PDO::FETCH_OBJ);
+
+        if (!empty($results)) {
+            return results;
+        }
+
+
     }
 
 

@@ -374,105 +374,108 @@ class UserController extends Controller
                 'msgBody' => 'Sorry, there\'s a problem authenticating your request. Please try again'
             );
         }
+    }
 
+    function changePassword($params)
+    {
+        $this->password = trim($params['currentPassword']);
+        $this->email = trim($params['userEmail']);
+        $newPassword = trim($params['newPassword']);
+        $confirmNewPassword = trim($params['confirmNewPassword']);
 
-        function changePassword($params)
-        {
-            $this->password = trim($params['currentPassword']);
-            $this->email = trim($params['userEmail']);
-            $newPassword = trim($params['newPassword']);
-            $confirmNewPassword = trim($params['confirmNewPassword']);
+        try {
+            $stmt = $this->db->prepare("SELECT email, password FROM project.users WHERE email = :userEmail LIMIT 1");
+            $stmt->bindParam("userEmail", $this->email, \PDO::PARAM_STR);
+            $stmt->execute();
+            $user = $stmt->fetch(\PDO::FETCH_OBJ);
+        } catch (\PDOException $e) {
+            return array(
+                'success' => false,
+                'msgTitle' => 'Database error',
+                'msgBody' => $e->getMessage()
+            );
+        }
 
-            try {
-                $stmt = $this->db->prepare("SELECT email, password FROM project.users WHERE email = :userEmail LIMIT 1");
-                $stmt->bindParam("userEmail", $this->email, \PDO::PARAM_STR);
-                $stmt->execute();
-                $user = $stmt->fetch(\PDO::FETCH_OBJ);
-            } catch (\PDOException $e) {
-                return array(
-                    'success' => false,
-                    'msgTitle' => 'Database error',
-                    'msgBody' => $e->getMessage()
-                );
-            }
+        if (($user) && password_verify($this->password, $user->password)) { //todo: fix
 
-            if (($user) && password_verify($this->password, $user->password)) { //todo: fix
+            if ($newPassword == $confirmNewPassword) {
 
-                if ($newPassword == $confirmNewPassword) {
-
-                    if (strlen($newPassword) <= 7) {
-                        return array('success' => false,
-                            'msgTitle' => 'Check new password',
-                            'msgBody' => 'Please check your password length meets the password length requirement.'
-                        );
-                    }
-                    if (!preg_match('#[0-9]+#', $newPassword)) {
-                        return array('success' => false,
-                            'msgTitle' => 'Check new password',
-                            'msgBody' => 'Please check your password contains at least one number'
-                        );
-                    }
-                    if (!preg_match('#[a-z]+#', $newPassword)) {
-                        return array('success' => false,
-                            'msgTitle' => 'Check new password',
-                            'msgBody' => 'Please check your password contains at least one lowercase letter.'
-                        );
-                    }
-                    if (!preg_match('#[A-Z]+#', $newPassword)) {
-                        return array('success' => false,
-                            'msgTitle' => 'Check new password',
-                            'msgBody' => 'Please check your password contains at least one uppercase letter.'
-                        );
-                    }
-
-                    $hash_password = password_hash($newPassword, PASSWORD_BCRYPT);
-
-                    try {
-                        $stmtPwd = $this->db->prepare("UPDATE project.users SET password = :password WHERE email = :email");
-                        $stmtPwd->bindParam("password", $hash_password, \PDO::PARAM_STR);
-                        $stmtPwd->bindParam("email", $this->email, \PDO::PARAM_STR);
-                        $stmtPwd->execute();
-
-                        $emailSuccess = $this->mail->send('emails/passwordchanged.twig', ['' => ''],
-                            function ($message) {
-                                $message->to($this->email);
-                                $message->subject('Password changed successfully');
-                            });
-                    } catch (\PDOException $e) {
-                        return array(
-                            'success' => false,
-                            'msgTitle' => 'Error',
-                            'msgBody' => $e->getMessage()
-                        );
-                    } catch (\phpmailerException $e) {
-                        return array( //PHPMailler error
-                            'success' => false,
-                            'msgTitle' => 'Error',
-                            'msgBody' => $e->errorMessage()
-                        );
-                    }
-
-                    if (is_bool($emailSuccess) && ($emailSuccess)) {
-                        return array( //registered successfully
-                            'success' => true,
-                            'msgTitle' => 'Registration successful!',
-                            'msgBody' => 'Thanks! Your account has been registered successfully. You can now login from the home page.'
-                        );
-                    }
-                } else {
+                if (strlen($newPassword) <= 7) {
                     return array(
                         'success' => false,
-                        'msgTitle' => 'Passwords don\'t match',
-                        'msgBody' => 'Please check that your new passwords match.'
+                        'msgTitle' => 'Check new password',
+                        'msgBody' => 'Please check your password length meets the password length requirement.'
+                    );
+                }
+                if (!preg_match('#[0-9]+#', $newPassword)) {
+                    return array(
+                        'success' => false,
+                        'msgTitle' => 'Check new password',
+                        'msgBody' => 'Please check your password contains at least one number'
+                    );
+                }
+                if (!preg_match('#[a-z]+#', $newPassword)) {
+                    return array(
+                        'success' => false,
+                        'msgTitle' => 'Check new password',
+                        'msgBody' => 'Please check your password contains at least one lowercase letter.'
+                    );
+                }
+                if (!preg_match('#[A-Z]+#', $newPassword)) {
+                    return array(
+                        'success' => false,
+                        'msgTitle' => 'Check new password',
+                        'msgBody' => 'Please check your password contains at least one uppercase letter.'
+                    );
+                }
+
+                $hash_password = password_hash($newPassword, PASSWORD_BCRYPT);
+
+                try {
+                    $stmtPwd = $this->db->prepare("UPDATE project.users SET password = :password WHERE email = :email");
+                    $stmtPwd->bindParam("password", $hash_password, \PDO::PARAM_STR);
+                    $stmtPwd->bindParam("email", $this->email, \PDO::PARAM_STR);
+                    $stmtPwd->execute();
+
+                    $emailSuccess = $this->mail->send('emails/passwordchanged.twig', ['' => ''],
+                        function ($message) {
+                            $message->to($this->email);
+                            $message->subject('Password changed successfully');
+                        });
+                } catch (\PDOException $e) {
+                    return array(
+                        'success' => false,
+                        'msgTitle' => 'Error',
+                        'msgBody' => $e->getMessage()
+                    );
+                } catch (\phpmailerException $e) {
+                    return array( //PHPMailler error
+                        'success' => false,
+                        'msgTitle' => 'Error',
+                        'msgBody' => $e->errorMessage()
+                    );
+                }
+
+                if (is_bool($emailSuccess) && ($emailSuccess)) {
+                    return array( //pw changed successfully
+                        'success' => true,
+                        'msgTitle' => 'Success!',
+                        'msgBody' => 'Thanks! Your password has been changed successfully.'
                     );
                 }
             } else {
                 return array(
                     'success' => false,
-                    'msgTitle' => 'Incorrect password',
-                    'msgBody' => 'Please check that your current password is correct, and try again.'
+                    'msgTitle' => 'Passwords don\'t match',
+                    'msgBody' => 'Please check that your new passwords match.'
                 );
             }
+        } else {
+            return array(
+                'success' => false,
+                'msgTitle' => 'Incorrect password',
+                'msgBody' => 'Please check that your current password is correct, and try again.'
+            );
         }
     }
 

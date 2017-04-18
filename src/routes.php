@@ -21,7 +21,6 @@ $app->get('/', function ($request, $response, $args) {
 
 $app->get('/form/{id}', function ($request, $response, $args) {
     if ($this->UserController->verifyUser($args['id'])) {
-
         return $this->twig->render($response, 'form.twig',
             [
                 'form' => $this->FormController->getSingleForm($args['id']),
@@ -69,10 +68,11 @@ $app->post('/register', function ($request, $response, $args) {
 $app->get('/admin', function ($request, $response, $args) {
     return $this->twig->render($response, 'admin.twig',
         [
-            'forms' => $this->FormController->getForms(),
-            'formsPrivate' => $this->FormController->getPrivateForms($_SESSION['user']->id) //private forms
+//            'forms' => $this->FormController->getForms(),
+//            'formsPrivate' => $this->FormController->getPrivateForms($_SESSION['user']->id) //private forms
         ]
-    );})->setName('admin');
+    );
+})->setName('admin');
 
 
 // ** FORGOT PASSWORD **
@@ -102,7 +102,7 @@ $app->post('/reset-password', function ($request, $response, $args) {
     return $response->withJson($checkReset);
 })->setName('resetPasswordPost');
 
-
+// ** CHANGE PASSWORD **
 $app->post('/change-password', function ($request, $response, $args) {
     $checkRegister = $this->UserController->changePassword($request->getParams());
     return $response->withJson($checkRegister);
