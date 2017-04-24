@@ -5,25 +5,32 @@
 {% endblock %}
 
 {% block content %}
+
+    {% if object.date|date('H') < 12 %}
+        {% set greeting = 'Good morning' %}
+    {% elseif object.date|date('H') >= 12 and object.date|date('H') < 18 %}
+        {% set greeting = 'Good afternoon' %}
+    {% elseif object.date|date('H') >= 18 and object.date|date('H') <= 23 %}
+        {% set greeting = 'Good evening' %}
+    {% endif %}
+
     <div class="page-header">
         {% if user %}
-            <h1>Welcome, {{ user.first_name }}.</h1>
+            <h1>{{ greeting }}, {{ user.first_name }}.</h1>
         {% else %}
-            <h1>Welcome, guest user.</h1>
+            <h1>{{ greeting }}, guest user.</h1>
         {% endif %}
     </div>
 
     <div class="well">
-        <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque elit enim, bibendum at sem eu, tincidunt laoreet nisi.
-            Phasellus dictum, nisi id aliquet scelerisque, dui metus viverra nunc, ut placerat nulla lorem quis quam. Duis non lacus neque. Proin in iaculis eros.
-            Vestibulum ornare viverra nulla, tristique malesuada mauris euismod et.
+        <span>Please start by selecting a public form below to fill in. You are welcome to access all public forms without registering for an account. If you have been directed here to fill in a specific form, it may be private and therefore require you to register. To register, please click 'Login/Register' from the top right hand corner, and follow the process. Upon completion, please inform IT of your registered email address in order for them to assign the correct form permissions to your account.
         </span>
     </div>
 
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title">Select a form...</h3>
+                <h3 class="panel-title">Public</h3>
             </div>
             <div class="panel-body">
                 <ul class="list-group">
@@ -43,18 +50,21 @@
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         <div class="panel panel-warning">
             <div class="panel-heading">
-                <h3 class="panel-title">My Private forms</h3>
+                <h3 class="panel-title">Private</h3>
             </div>
             <div class="panel-body">
                 {% if user %}
                     <ul class="list-group">
-                        {% if formsPrivate is empty %}
-                            <span>There are currently no private forms assigned to you.</span>
-                        {% else %}
+                        {% if formsPrivate %}
                             {% for form in formsPrivate %}
-                                <a href="{{ path_for('form', { 'id' : form.ID } ) }}" class="list-group-item"><span class="badge"><span class="glyphicon glyphicon-lock"></span></span> {{ form.title }}</a>
+                                <a href="{{ path_for('form', { 'id' : form.ID } ) }}" class="list-group-item"><span
+                                            class="badge"><span
+                                                class="glyphicon glyphicon-lock"></span></span> {{ form.title }}</a>
                             {% endfor %}
+                        {% else %}
+                            <span>There are currently no private forms assigned to you.</span>
                         {% endif %}
+
                     </ul>
                 {% else %}
                     <span>Please <a href="#" data-toggle="modal" data-target="#loginModal">login</a> to access private forms.</span>

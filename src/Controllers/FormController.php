@@ -42,9 +42,8 @@ class FormController extends Controller
         $results = $stmt->fetchAll(\PDO::FETCH_OBJ);
 
         if (!empty($results)) {
-            return results;
+            return $results;
         }
-
 
     }
 
@@ -127,19 +126,18 @@ class FormController extends Controller
             try {
                 $stmt = $this->db->prepare($sqlStmt);
 
-                for ($i = 0; $i < $totalParams; $i++) { //ITS HERE FAM
+                for ($i = 0; $i < $totalParams; $i++) {
 
                     if (empty(array_values($params)[$i])) {
                         $null = NULL;
-//                        $stmt->bindParam($i + 1, $null, \PDO::PARAM_STR);
                         $stmt->bindParam(":" . array_keys($params)[$i], $null, \PDO::PARAM_STR);
 
                     } else {
-//                        $stmt->bindParam($i + 1, array_values($params)[$i], \PDO::PARAM_STR);
                         $stmt->bindParam(":" . array_keys($params)[$i], array_values($params)[$i], \PDO::PARAM_STR);
-
                     }
+
                 }
+
                 if ($stmt->execute()) {
 
                     return array(
@@ -147,13 +145,14 @@ class FormController extends Controller
                         'msgTitle' => 'Form submitted',
                         'msgBody' => 'Thanks! Your form has been submitted successfully.'
                     );
-                } else {
-                    return array(
-                        'success' => false,
-                        'msgTitle' => 'Form dead',
-                        'msgBody' => 'dead'
-                    );
                 }
+//                else {
+//                    return array(
+//                        'success' => false,
+//                        'msgTitle' => 'Form dead',
+//                        'msgBody' => 'dead'
+//                    );
+//                }
             } catch
             (\PDOException $e) {
                 return array(
