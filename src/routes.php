@@ -65,7 +65,7 @@ $app->post('/register', function ($request, $response, $args) {
 })->setName('register');
 
 
-$app->get('/admin', function ($request, $response, $args) {
+$app->get('/admin', function (\Slim\Http\Request $request, \Slim\Http\Response $response, $args) {
     return $this->twig->render($response, 'admin.twig',
         [
 //            'forms' => $this->FormController->getForms(),

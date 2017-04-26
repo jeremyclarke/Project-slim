@@ -13,7 +13,6 @@ class ObjectController extends Controller
 
     function getFormObjects($formID)
     {
-//        $sql = 'SELECT ID, ID, form_ID, type, SQL_populate_query, caption, required, input_length, regex, validation_error FROM project.objects WHERE form_ID = :formID ORDER BY -obj_order DESC';
         $sql = 'SELECT * FROM project.objects WHERE form_ID = :formID ORDER BY -obj_order DESC';
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':formID', $formID, \PDO::PARAM_INT);
@@ -30,11 +29,26 @@ class ObjectController extends Controller
 
     function getFormObjectSQLResult($sql, $id)
     {
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        //$this->statementResults[$id] = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
-        $this->statementResults[$id] = $stmt->fetchAll(\PDO::FETCH_NUM);
+        $action = explode(' ', trim($sql))[0];
+
+        if (strtolower($action) == 'select') {
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $this->statementResults[$id] = $stmt->fetchAll(\PDO::FETCH_NUM);
+
+        } else {
+
+            $strings = explode(",", $sql);
+
+            foreach ($strings as &$string) {
+                $string = array(trim($string));
+            }
+
+            $this->statementResults[$id] = $strings;
+        }
     }
+
 
     function getStatementResults()
     {
