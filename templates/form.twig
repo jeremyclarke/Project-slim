@@ -19,16 +19,34 @@
 
         <form class="col-lg-12 col-md-12 col-sm-12 col-xs-12" method="post" id="pageForm" data-toggle="validator">
             <ul>
-                {% for object in objects %}
+                {% if objects is empty %}
+                    <div class="alert alert-info alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        <strong>Time to add objects!</strong> Your form is empty and has no objects yet; please add some
+                        form objects using the objects table.
+                    </div>
+                {% endif %}
 
-                    {% include "objects/#{object.type}.twig" %}
+                {% for object in objects %}
+                    {% if (object.type == 'checkbox') or (object.type =='dropdown') or (object.type == 'label') or (object.type == 'radio') or (object.type == 'textarea') or (object.type == 'textbox') %}
+
+                        {% include "objects/#{object.type}.twig" %}
+
+                    {% else %}
+                        <span class="label label-warning">Invalid object with ID {{ object.ID }}: "{{ object.type }}". Please check object type.</span>
+                        <br>
+                    {% endif %}
+
                     </br>
 
                 {% endfor %}
 
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary" id="submitButton">Submit</button>
-                </div>
+                {% if objects is not empty %}
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" id="submitButton">Submit</button>
+                    </div>
+                {% endif %}
 
             </ul>
 
