@@ -97,13 +97,6 @@ class FormController extends Controller
                         'msgBody' => 'Thanks! Your form has been submitted successfully.'
                     );
                 }
-//                else {
-//                    return array(
-//                        'success' => false,
-//                        'msgTitle' => 'Form dead',
-//                        'msgBody' => 'dead'
-//                    );
-//                }
             } catch
             (\PDOException $e) {
                 return array(
