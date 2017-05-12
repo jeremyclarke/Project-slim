@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jerem
- * Date: 11/04/2017
- * Time: 20:07
- */
 
 namespace App\Controllers;
-
 
 class Controller
 {

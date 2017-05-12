@@ -36,7 +36,7 @@ $container['db'] = function ($c) {
 //twig
 $container['twig'] = function ($c) {
     $twig = new \Slim\Views\Twig(__DIR__ . '/../templates', [
-        'cache' => false // todo:  turn on before live
+        'cache' => false
     ]);
     // Instantiate and add Slim specific extension
     $basePath = rtrim(str_ireplace('index.php', '', $c['request']->getUri()->getBasePath()), '/');

@@ -392,7 +392,7 @@ class UserController extends Controller
             );
         }
 
-        if (($user) && password_verify($this->password, $user->password)) { //todo: fix
+        if (($user) && password_verify($this->password, $user->password)) {
 
             if ($newPassword == $confirmNewPassword) {
 

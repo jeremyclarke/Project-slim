@@ -1,7 +1,7 @@
 <?php
 return [
     'settings' => [
-        'displayErrorDetails' => true, //todo: set to false in production
+        'displayErrorDetails' => false, //todo: set to false in production
         'addContentLengthHeader' => false, // Allow the web server to send the content-length header
 
         // Renderer settings
@@ -20,11 +20,11 @@ return [
         'db' => [
             'host' => 'jeremydb.cq2ysl1zpgeh.eu-west-2.rds.amazonaws.com:3306',
             'user' => 'jeremy',
-            'pass' => 'Xbs5S57g',
+            'pass' => '4(FjX^=AS3e~mxmM',
             'dbname' => 'project',
         ],
 
-        // PHPMailer //todo: check what happens when mail server is broken
+        // PHPMailer
         'mail' => [
             'host' => 'smtp.zoho.com',
             'SMTPAuth' => true,
@@ -33,15 +33,6 @@ return [
             'SMTPSecure' => 'tls',
             'port' => 587,
         ]
-
-//        'mail' => [
-//            'host' => 'smtp.gmail.com',
-//            'SMTPAuth' => true,
-//            'user' => 'jeremyclarke100@gmail.com',
-//            'pass' => 'bUf8e49h4b',
-//            'SMTPSecure' => 'tls',
-//            'port' => 587,
-//        ]
 
     ],
 ];

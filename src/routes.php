@@ -30,8 +30,7 @@ $app->get('/form/{id}', function ($request, $response, $args) {
         );
     } else {
         return $response->withStatus(302)->withHeader('Location', '/'); //todo: error message upon return
-//        setcookie("displayUnauthAccess", "Unauthorised");
-//        exit;
+
     }
 })->setName('form');
 
@@ -83,7 +82,7 @@ $app->post('/forgot-password', function ($request, $response, $args) {
 
 
 $app->get('/forgot-password', function ($request, $response, $args) {
-    $checkReset = $this->UserController->checkResetPassword($request->getParams());// todo: check whether can just use this
+    $checkReset = $this->UserController->checkResetPassword($request->getParams());
     if ($checkReset) {
         return $this->twig->render($response, 'resetpassword.twig',
             [
@@ -98,7 +97,7 @@ $app->get('/forgot-password', function ($request, $response, $args) {
 
 
 $app->post('/reset-password', function ($request, $response, $args) {
-    $checkReset = $this->UserController->resetPassword($request->getParams());// todo: check whether can just use this
+    $checkReset = $this->UserController->resetPassword($request->getParams());
     return $response->withJson($checkReset);
 })->setName('resetPasswordPost');
 
