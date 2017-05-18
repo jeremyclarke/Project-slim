@@ -11,26 +11,39 @@
 {% endif %}
 
 <div class="form-group">
-    {% if object.required == '0' %}
-        <input type="hidden" name="radio_{{ object.ID }}" value="" {{ required }}>
-    {% endif %}
+    {#{% if object.required != '1' %}#}
+    {#<input type="hidden" value="" {{ required }}>#}
+    {#{% endif %}#}
 
     {% if form.developer_mode %}
         <code class="pull-right"> @@{{ object.type }}_{{ object.ID }}</code>
     {% endif %}
 
+
+    {#{% if object.required != '1' %}#}
+    {#<input type="hidden" name="radio_{{ object.ID }}" value="" {{ required }}>#}
+    {#{% endif %}#}
+
     {% for option in objectSQL[object.ID] %}
+
         <div class="radio">
+
             <label>
                 {% if option[1] is empty %}
                     <input type="radio" name="radio_{{ object.ID }}"
-                           value="{{ option[0]|raw }}" {{ required }}> {{ option[0]|raw }}<br>
+                            {#value="{{ option[0]|raw }}" {{ required }}> {{ option[0]|raw }}<br>#}
+                           value="{{ option[0]|raw }}" required> {{ option[0]|raw }}<br>
+
                 {% else %}
                     <input type="radio" name="radio_{{ object.ID }}"
-                           value="{{ option[0]|raw }}" {{ required }}> {{ option[1]|raw }}<br>
+                            {#value="{{ option[0]|raw }}" {{ required }}> {{ option[1]|raw }}<br>#}
+                           value="{{ option[0]|raw }}" required> {{ option[1]|raw }}<br>
+
                 {% endif %}
             </label>
+
         </div>
+
     {% endfor %}
 
 </div>

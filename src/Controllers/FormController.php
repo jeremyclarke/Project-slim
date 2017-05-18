@@ -33,7 +33,7 @@ class FormController extends Controller
     {
         $sql = 'SELECT * FROM project.forms 
                 WHERE private = 1 
-                AND ID = (SELECT form_id from project.permissions where user_id = :userID LIMIT 1)';
+                AND ID IN (SELECT form_id from project.permissions where user_id = :userID)';
 
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam("userID", $userID, \PDO::PARAM_INT);
@@ -44,7 +44,6 @@ class FormController extends Controller
         if (!empty($results)) {
             return $results;
         }
-
     }
 
     function submitForm($params, $id)

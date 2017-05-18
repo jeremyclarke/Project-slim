@@ -29,6 +29,7 @@ $container['db'] = function ($c) {
 
     } catch (PDOException $e) {
         echo 'Problem connecting to database.<br>';
+        echo $e->getMessage();
         die();
     }
 };

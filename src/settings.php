@@ -1,7 +1,7 @@
 <?php
 return [
     'settings' => [
-        'displayErrorDetails' => false, //todo: set to false in production
+        'displayErrorDetails' => true, //todo: set to false in production
         'addContentLengthHeader' => false, // Allow the web server to send the content-length header
 
         // Renderer settings

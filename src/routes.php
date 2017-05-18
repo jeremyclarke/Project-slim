@@ -29,6 +29,7 @@ $app->get('/form/{id}', function ($request, $response, $args) {
             ]
         );
     } else {
+//        unset($_SESSION["user"]);
         return $response->withStatus(302)->withHeader('Location', '/'); //todo: error message upon return
 
     }

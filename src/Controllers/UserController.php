@@ -169,7 +169,7 @@ class UserController extends Controller
 
             if ($row->private == 0) { //if the form is public anyway..
                 return true;
-            } else {//else if its private, check the user logged it should be able to access it
+            } else if (isset($_SESSION['user'])) {//else if its private, check the user logged it should be able to access it
                 $stmt = $this->db->prepare("SELECT COUNT(user_id) AS num FROM project.permissions WHERE form_ID = :formID AND user_ID = :userID");
                 $stmt->bindParam("formID", $formID, \PDO::PARAM_INT);
                 $stmt->bindParam("userID", $_SESSION['user']->id, \PDO::PARAM_INT);
@@ -181,6 +181,8 @@ class UserController extends Controller
                 } else {
                     return false;
                 }
+            } else {
+                return false;
             }
         } catch (\PDOException $e) {
             die($e->getMessage());
